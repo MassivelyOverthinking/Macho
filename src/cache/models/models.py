@@ -13,13 +13,13 @@ class CacheEntry():
     __slots__ = ("value", "expiry")
 
     def __init__(self, value: Any, ttl: float):
-        self.Value = value
+        self.value = value
         self.expiry = time.time() + ttl
 
     def is_expired(self) -> bool:
         return time.time() > self.expiry
-
-class CacheManager():
+    
+class BaseCache():
     __slots__ = ("MAX_CACHE_SIZE", "DEFAULT_TTL", "cache", "lock")
 
     def __init__(self, MAX_CACHE_SIZE: int = 64, DEFAULT_TTL: float = 600.0):
@@ -32,10 +32,30 @@ class CacheManager():
         for key in list(self.cache.keys()):
             if self.cache[key].is_expired():
                 del self.cache[key]
+    
+    def clear(self) -> None:
+        with self.lock:
+            self.cache.clear()
+
+    @property
+    def capacity(self) -> int:
+        return len(self.cache)
+    
+    @property
+    def size(self) -> int:
+        return self.MAX_CACHE_SIZE
+    
+    @property
+    def ttl(self) -> int:
+        return self.DEFAULT_TTL
+    
+class LRUCache(BaseCache):
+    def __init__(self, MAX_CACHE_SIZE = 64, DEFAULT_TTL = 600):
+        super().__init__(MAX_CACHE_SIZE, DEFAULT_TTL)
 
     def add(self, key: Any, value: Any) -> None:
         with self.lock:
-            self._purge_expired()
+            self._purge_expired
 
             self.cache.pop(key, None)
 
@@ -43,7 +63,7 @@ class CacheManager():
                 self.cache.popitem(last=False)
             self.cache[key] = CacheEntry(value, self.DEFAULT_TTL)
 
-    def get(self, key: Any) -> Optional[Any]:
+    def get(self, key: Any) -> Optional[CacheEntry]:
         with self.lock:
             entry = self.cache.get(key)
             if entry is None or entry.is_expired():
@@ -51,14 +71,6 @@ class CacheManager():
                 return None
             self.cache.move_to_end(key)
             return entry.value
+
+    
         
-    def clear(self) -> None:
-        with self.lock:
-            self.cache.clear()
-
-class cache():
-    __slots__ = ("MAX_CACHE_SIZE", "TTL" "shards_counts", "evict_strat")
-
-    def __init__(self, MAX_CACHE_SIZE: int = 1, TTL: int = 600, shards_count: int = 1, evict_strat: str = "lru"):
-        self.cache = []
-        self.evict_strat = evict_strat
