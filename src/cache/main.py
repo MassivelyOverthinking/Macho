@@ -3,62 +3,47 @@
 from threading import RLock
 from typing import Any
 from collections import OrderedDict
-from typing import Optional
+from typing import Optional, List
 
 import time
 
-# --------------- Caching Models ---------------
+# --------------- Main Application ---------------
 
-class CacheEntry():
-    __slots__ = ("value", "expiry")
+class Cache():
+    __slots__ = ("MAX_CACHE_SIZE", "TTL" "shard_count", "evict_strat")
 
-    def __init__(self, value: Any, ttl: float):
-        self.Value = value
-        self.expiry = time.time() + ttl
-
-    def is_expired(self) -> bool:
-        return time.time() > self.expiry
-
-class CacheManager():
-    __slots__ = ("MAX_CACHE_SIZE", "DEFAULT_TTL", "cache", "lock")
-
-    def __init__(self, MAX_CACHE_SIZE: int = 64, DEFAULT_TTL: float = 600.0):
-        self.MAX_CACHE_SIZE = MAX_CACHE_SIZE
-        self.DEFAULT_TTL = DEFAULT_TTL
-        self.cache: OrderedDict[Any, CacheEntry] = OrderedDict()
-        self.lock = RLock()
-
-    def _purge_expired(self) -> None:
-        for key in list(self.cache.keys()):
-            if self.cache[key].is_expired():
-                del self.cache[key]
-
-    def add(self, key: Any, value: Any) -> None:
-        with self.lock:
-            self._purge_expired()
-
-            self.cache.pop(key, None)
-
-            while len(self.cache) >= self.MAX_CACHE_SIZE:
-                self.cache.popitem(last=False)
-            self.cache[key] = CacheEntry(value, self.DEFAULT_TTL)
-
-    def get(self, key: Any) -> Optional[Any]:
-        with self.lock:
-            entry = self.cache.get(key)
-            if entry is None or entry.is_expired():
-                self.cache.pop(key, None)
-                return None
-            self.cache.move_to_end(key)
-            return entry.value
-        
-    def clear(self) -> None:
-        with self.lock:
-            self.cache.clear()
-
-class cache():
-    __slots__ = ("MAX_CACHE_SIZE", "TTL" "shards_counts", "evict_strat")
-
-    def __init__(self, MAX_CACHE_SIZE: int = 1, TTL: int = 600, shards_count: int = 1, evict_strat: str = "lru"):
+    def __init__(self, MAX_CACHE_SIZE: int = 1, TTL: int = 600, shard_count: int = 1, evict_strat: str = "lru"):
         self.cache = []
+        self.MAX_CACHE_SIZE = MAX_CACHE_SIZE
+        self.TTL = TTL
+        self.shard_count = shard_count
         self.evict_strat = evict_strat
+
+    def _get_shard_size(self) -> List[int]:
+        base = self.MAX_CACHE_SIZE // self.shard_count
+        remainder = self.MAX_CACHE_SIZE % self.shard_count
+        shards = []
+
+        for i in range(self.shard_count):
+            size = base + (1 if i < remainder else 0)
+            shards.append(size)
+
+        return shards
+    
+    def _create_caches(self) -> None:
+        shard_size = self._get_shard_size()
+        cache_list = []
+
+        if self.evict_strat is "lru":
+            for i in range(shard_size):
+                cache_list.append(i)
+        elif self.evict_strat is "fifo":
+            for i in range(shard_size):
+                cache_list.append(i)
+        elif self.evict_strat is "random":
+            for i in range(shard_size):
+                cache_list.append(i)
+        else:
+            raise Exception
+        
+        return cache_list
