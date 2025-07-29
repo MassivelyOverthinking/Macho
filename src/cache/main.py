@@ -10,18 +10,25 @@ import time
 # --------------- Main Application ---------------
 
 class Cache():
-    __slots__ = ("MAX_CACHE_SIZE", "TTL" "shard_count", "evict_strat")
+    __slots__ = ("max_cache_size", "ttl" "shard_count", "evict_strat", "bloom")
 
-    def __init__(self, MAX_CACHE_SIZE: int = 1, TTL: int = 600, shard_count: int = 1, evict_strat: str = "lru"):
+    def __init__(
+            self, max_cache_size: int = 100,
+            ttl: float = 600.0,
+            shard_count: int = 1,
+            strategy: str = "lru",
+            bloom: bool = False
+        ):
         self.cache = []
-        self.MAX_CACHE_SIZE = MAX_CACHE_SIZE
-        self.TTL = TTL
+        self.max_cache_size = max_cache_size
+        self.ttl = ttl
         self.shard_count = shard_count
-        self.evict_strat = evict_strat
+        self.strategy = strategy
+        self.bloom = bloom
 
     def _get_shard_size(self) -> List[int]:
-        base = self.MAX_CACHE_SIZE // self.shard_count
-        remainder = self.MAX_CACHE_SIZE % self.shard_count
+        base = self.max_cache_size // self.shard_count
+        remainder = self.max_cache_size % self.shard_count
         shards = []
 
         for i in range(self.shard_count):
@@ -33,17 +40,5 @@ class Cache():
     def _create_caches(self) -> None:
         shard_size = self._get_shard_size()
         cache_list = []
-
-        if self.evict_strat is "lru":
-            for i in range(shard_size):
-                cache_list.append(i)
-        elif self.evict_strat is "fifo":
-            for i in range(shard_size):
-                cache_list.append(i)
-        elif self.evict_strat is "random":
-            for i in range(shard_size):
-                cache_list.append(i)
-        else:
-            raise Exception
         
         return cache_list
