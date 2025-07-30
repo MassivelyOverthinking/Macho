@@ -2,7 +2,9 @@
 
 
 from typing import List
-from cache.models.models import CacheEntry
+
+from .models.models import CacheEntry
+from .utility.utils import create_cache
 
 # --------------- Main Application ---------------
 
@@ -10,7 +12,8 @@ class Cache():
     __slots__ = ("max_cache_size", "ttl" "shard_count", "evict_strat", "bloom", "probability")
 
     def __init__(
-            self, max_cache_size: int = 100,
+            self, 
+            max_cache_size: int = 100,
             ttl: float = 600.0,
             shard_count: int = 1,
             strategy: str = "lru",

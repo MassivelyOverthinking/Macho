@@ -2,7 +2,7 @@
 
 from typing import List, Optional, Union
 
-from ..models.models import BaseCache, LRUCache, FIFOCache, RandomCache
+from ..models import BaseCache, LRUCache, FIFOCache, RandomCache
 
 # --------------- Utility Functions ---------------
 
