@@ -28,7 +28,7 @@ def check_cache_list(policy: str) -> BaseCache:
     
 def _create_single_cache(policy: str) -> BaseCache:
     cache_class = check_cache_list(policy=policy)
-    return cache_list
+    return cache_class
     
 def _create_sharded_cache(num: int, shards_capacity: List[int], policy: str) -> List[BaseCache]:
     shards_list = []
@@ -36,8 +36,9 @@ def _create_sharded_cache(num: int, shards_capacity: List[int], policy: str) -> 
     cache_class = check_cache_list(policy=policy)
 
     for n in range(num):
-        new_cache = cache_class()
-        shards_list.append(new_cache)
+        cap = shards_capacity[num]      # Pick the capacity num from list
+        new_cache = cache_class(cap)    # Create new class instance with capacity
+        shards_list.append(new_cache)   # Append new cache class to final list
 
     return shards_list
 
