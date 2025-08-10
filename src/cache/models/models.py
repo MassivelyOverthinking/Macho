@@ -25,7 +25,7 @@ class CacheEntry():
 class BaseCache():
     __slots__ = ("max_cache_size", "default_ttl", "cache", "lock")
 
-    def __init__(self, max_cache_size: int = 64, default_ttl: float = 600.0):
+    def __init__(self, max_cache_size: int = 100, default_ttl: float = 600.0):
         self.max_cache_size = max_cache_size
         self.default_ttl = default_ttl
         self.cache: OrderedDict[Any, CacheEntry] = OrderedDict()
@@ -53,8 +53,8 @@ class BaseCache():
         return self.default_ttl
     
 class LRUCache(BaseCache):
-    def __init__(self, max_cache_size = 64, default_ttl = 600):
-        super().__init__(max_cache_size, default_ttl)
+    def __init__(self):
+        super().__init__()
 
     def add(self, key: Any, value: Any) -> None:
         with self.lock:
@@ -76,8 +76,8 @@ class LRUCache(BaseCache):
             return entry.value
         
 class FIFOCache(BaseCache):
-    def __init__(self, max_cache_size = 64, default_ttl = 600):
-        super().__init__(max_cache_size, default_ttl)
+    def __init__(self):
+        super().__init__()
 
     def add(self, key: Any, value: Any) -> None:
         with self.lock:
@@ -98,8 +98,8 @@ class FIFOCache(BaseCache):
             return entry.value
 
 class RandomCache(BaseCache):
-    def __init__(self, max_cache_size = 64, default_ttl = 600):
-        super().__init__(max_cache_size, default_ttl)
+    def __init__(self):
+        super().__init__()
 
     def add(self, key: Any, value: Any) -> None:
         self._purge_expired()

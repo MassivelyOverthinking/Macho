@@ -26,9 +26,10 @@ def check_cache_list(policy: str) -> BaseCache:
     
 # --------------- Cache Creation ---------------
     
-def _create_single_cache(policy: str) -> BaseCache:
+def _create_single_cache(capacity_num: int, policy: str) -> BaseCache:
     cache_class = check_cache_list(policy=policy)
     return cache_class
+
     
 def _create_sharded_cache(num: int, shards_capacity: List[int], policy: str) -> List[BaseCache]:
     shards_list = []
@@ -42,9 +43,10 @@ def _create_sharded_cache(num: int, shards_capacity: List[int], policy: str) -> 
 
     return shards_list
 
-def create_cache(shards: int = 1, policy: str = "lru", shards_capacity: Optional[List[int]] = None) -> Union[BaseCache, List[BaseCache]]:
+
+def create_cache(max_capacity: int = 100, shards: int = 1, policy: str = "lru", shards_capacity: Optional[List[int]] = None) -> Union[BaseCache, List[BaseCache]]:
     if shards == 1:
-        return _create_single_cache(policy=policy)
+        return _create_single_cache(capacity_num=max_capacity, policy=policy)
     else:
         if shards_capacity is None:
             raise ValueError("Must provide 'shards_capacity' when creating shared cache")

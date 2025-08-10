@@ -9,7 +9,7 @@ from .utility.utils import create_cache
 # --------------- Main Application ---------------
 
 class Cache():
-    __slots__ = ("max_cache_size", "ttl" "shard_count", "evict_strat", "bloom", "probability")
+    __slots__ = ("max_cache_size", "ttl" "shard_count", "strategy", "bloom", "probability")
 
     def __init__(
             self, 
@@ -20,7 +20,7 @@ class Cache():
             bloom: bool = False,
             probability: float = 0.5
         ):
-        self.cache = []
+        self.cache = self._create_caches()
         self.max_cache_size = max_cache_size
         self.ttl = ttl
         self.shard_count = shard_count
@@ -31,7 +31,7 @@ class Cache():
             num = hash(entry) / self.shard_count
             self.cache[num].add(entry)
         else:
-            self.cache[0].add(entry)
+            self.cache.add(entry)
 
     def _get_shard_size(self) -> List[int]:
         base = self.max_cache_size // self.shard_count
@@ -45,7 +45,14 @@ class Cache():
         return shards
     
     def _create_caches(self) -> None:
-        shard_size = self._get_shard_size()
-        cache_list = []
+        if self.shard_count == 1:
+            shard_size = None
+        else:
+            shard_size = self._get_shard_size()
         
-        return cache_list
+        return create_cache(
+            max_capacity=self.max_cache_size,
+            shards=self.shard_count,
+            policy=self.strategy,
+            shards_capacity=shard_size
+        )
