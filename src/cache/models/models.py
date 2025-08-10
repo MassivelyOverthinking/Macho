@@ -25,7 +25,7 @@ class CacheEntry():
 class BaseCache():
     __slots__ = ("max_cache_size", "default_ttl", "cache", "lock")
 
-    def __init__(self, max_cache_size: int = 100, default_ttl: float = 600.0):
+    def __init__(self, max_cache_size: int, default_ttl: float):
         self.max_cache_size = max_cache_size
         self.default_ttl = default_ttl
         self.cache: OrderedDict[Any, CacheEntry] = OrderedDict()
