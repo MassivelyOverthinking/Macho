@@ -37,7 +37,7 @@ def _create_sharded_cache(ttl: float, num: int, shards_capacity: List[int], poli
     cache_class = check_cache_list(policy=policy)
 
     for n in range(num):
-        cap = shards_capacity[n]                                      # Pick the capacity num from list
+        cap = shards_capacity[n]                                        # Pick the capacity num from list
         new_cache = cache_class(max_cache_size=cap, default_ttl=ttl)    # Create new class instance with capacity
         shards_list.append(new_cache)                                   # Append new cache class to final list
 

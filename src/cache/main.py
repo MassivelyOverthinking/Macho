@@ -28,31 +28,35 @@ class Cache():
         self.bloom = bloom
         self.probability = probability
 
-        if self.bloom:
+        if self.bloom and self.shard_count > 1:
+            self.bloom_filter = [BloomFilter(self.max_cache_size, self.probability) for _ in range(self.shard_count)]
+        elif self.bloom_filter and self.shard_count == 1:
             self.bloom_filter = BloomFilter(self.max_cache_size, self.probability)
         else:
             self.bloom_filter = None
 
         self.cache = self._create_caches()
 
-    def add(self, entry: any) -> None:
-        if self.bloom_filter:
-            self.bloom_filter.add(entry)
-
-        if self.shard_count > 1:
-            num = hash(entry) % self.shard_count
-            self.cache[num].add(value=entry)
-        else:
-            self.cache.add(value=entry)
-
-    def get(self, key: Any) -> Optional[Any]:
-        if self.bloom_filter and not self.bloom_filter.check(key):
-            return None
-        
+    def add(self, key: Any, entry: Any) -> None:
         if self.shard_count > 1:
             num = hash(key) % self.shard_count
+            if self.bloom_filter:
+                self.bloom_filter[num].add(key)
+            self.cache[num].add(key=key, value=entry)
+        else:
+            if self.bloom_filter:
+                self.bloom_filter.add(key)
+            self.cache.add(key=key, value=entry)
+
+    def get(self, key: Any) -> Optional[Any]:
+        if self.shard_count > 1:
+            num = hash(key) % self.shard_count
+            if self.bloom_filter and not self.bloom_filter[num].check(key):
+                return None
             return self.cache[num].get(key)
         else:
+            if self.bloom_filter and not self.bloom_filter.check(key):
+                return None
             return self.cache.get(key)
         
     def clear(self) -> None:
