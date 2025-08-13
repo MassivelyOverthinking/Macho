@@ -53,8 +53,8 @@ class BaseCache():
         return self.default_ttl
     
 class LRUCache(BaseCache):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, max_cache_size: int, default_ttl: float):
+        super().__init__(max_cache_size, default_ttl)
 
     def add(self, key: Any, value: Any) -> None:
         with self.lock:
@@ -76,8 +76,8 @@ class LRUCache(BaseCache):
             return entry.value
         
 class FIFOCache(BaseCache):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, max_cache_size: int, default_ttl: float):
+        super().__init__(max_cache_size, default_ttl)
 
     def add(self, key: Any, value: Any) -> None:
         with self.lock:
@@ -98,8 +98,8 @@ class FIFOCache(BaseCache):
             return entry.value
 
 class RandomCache(BaseCache):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, max_cache_size: int, default_ttl: float):
+        super().__init__(max_cache_size, default_ttl)
 
     def add(self, key: Any, value: Any) -> None:
         self._purge_expired()

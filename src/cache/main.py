@@ -1,15 +1,16 @@
 # --------------- Imports ---------------
 
 
-from typing import List, Union
+from typing import List, Union, Any, Optional
 
 from .models.models import BaseCache
 from .utility.utils import create_cache
+from .bloom_filter.bloom import BloomFilter
 
 # --------------- Main Application ---------------
 
 class Cache():
-    __slots__ = ("max_cache_size", "ttl" "shard_count", "strategy", "bloom", "probability")
+    __slots__ = ("max_cache_size", "ttl", "shard_count", "strategy", "bloom", "probability")
 
     def __init__(
             self, 
@@ -20,7 +21,6 @@ class Cache():
             bloom: bool = False,
             probability: float = 0.5
         ):
-        self.cache = self._create_caches()
         self.max_cache_size = max_cache_size
         self.ttl = ttl
         self.shard_count = shard_count
@@ -28,12 +28,39 @@ class Cache():
         self.bloom = bloom
         self.probability = probability
 
+        if self.bloom:
+            self.bloom_filter = BloomFilter(self.max_cache_size, self.probability)
+        else:
+            self.bloom_filter = None
+
+        self.cache = self._create_caches()
+
     def add(self, entry: any) -> None:
+        if self.bloom_filter:
+            self.bloom_filter.add(entry)
+
         if self.shard_count > 1:
-            num = hash(entry) / self.shard_count
+            num = hash(entry) % self.shard_count
             self.cache[num].add(value=entry)
         else:
             self.cache.add(value=entry)
+
+    def get(self, key: Any) -> Optional[Any]:
+        if self.bloom_filter and not self.bloom_filter.check(key):
+            return None
+        
+        if self.shard_count > 1:
+            num = hash(key) % self.shard_count
+            return self.cache[num].get(key)
+        else:
+            return self.cache.get(key)
+        
+    def clear(self) -> None:
+        if isinstance(self.cache, list):
+            for shard in self.cache:
+                shard.clear()
+        else:
+            self.cache.clear()
 
     def _get_shard_size(self) -> List[int]:
         base = self.max_cache_size // self.shard_count
