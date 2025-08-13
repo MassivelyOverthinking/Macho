@@ -3,9 +3,9 @@
 
 from typing import List, Union, Any, Optional
 
-from .models.models import BaseCache
-from .utility.utils import create_cache
-from .bloom_filter.bloom import BloomFilter
+from .models import BaseCache
+from .utility import create_cache
+from .bloom_filter import BloomFilter
 
 # --------------- Main Application ---------------
 
@@ -29,11 +29,12 @@ class Cache():
         self.probability = probability
 
         if self.bloom and self.shard_count > 1:
-            self.bloom_filter = [BloomFilter(self.max_cache_size, self.probability) for _ in range(self.shard_count)]
-        elif self.bloom_filter and self.shard_count == 1:
+            shard_sizes = self._get_shard_size()
+            self.bloom_filter = [BloomFilter(size, self.probability) for size in shard_sizes]
+        elif self.bloom and self.shard_count == 1:
             self.bloom_filter = BloomFilter(self.max_cache_size, self.probability)
         else:
-            self.bloom_filter = None
+            self.bloom = None
 
         self.cache = self._create_caches()
 
