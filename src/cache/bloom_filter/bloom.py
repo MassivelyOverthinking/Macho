@@ -24,8 +24,7 @@ class BloomFilter(object):
     def check(self, item):
         for i in range(self.hash_count):
             digest = self._hash(item, i) % self.size
-            if self.bit_array[digest] == False:
-
+            if not self.bit_array[digest]:
                 return False
         return True
     

@@ -102,14 +102,15 @@ class RandomCache(BaseCache):
         super().__init__(max_cache_size, default_ttl)
 
     def add(self, key: Any, value: Any) -> None:
-        self._purge_expired()
+        with self.lock:
+            self._purge_expired()
 
-        self.cache.pop(key, None)
+            self.cache.pop(key, None)
 
-        while len(self.cache) >= self.max_cache_size:
-            random_key = random.choice(list(self.cache.keys()))
-            self.cache.pop(random_key)
-        self.cache[key] = CacheEntry(value, self.default_ttl)
+            while len(self.cache) >= self.max_cache_size:
+                random_key = random.choice(list(self.cache.keys()))
+                self.cache.pop(random_key)
+            self.cache[key] = CacheEntry(value, self.default_ttl)
 
     def get(self, key: Any) -> Optional[Any]:
         with self.lock:

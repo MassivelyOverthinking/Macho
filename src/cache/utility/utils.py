@@ -1,10 +1,10 @@
 # --------------- Imports ---------------
 
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Any
 
 from ..models import BaseCache, LRUCache, FIFOCache, RandomCache
 
-# --------------- Utility Functions ---------------
+# --------------- Cache-list Function ---------------
 
 cache_list = {
     "lru": LRUCache,
@@ -22,6 +22,13 @@ def check_cache_list(policy: str) -> BaseCache:
         return cache_list[policy]
     else:
         raise ValueError(f"Eviction Strategy {policy} not supported")
+    
+
+# --------------- Hash Function ---------------
+    
+
+def hash_value(key: Any, count: int) -> int:
+    return hash(key) % count
     
     
 # --------------- Cache Creation ---------------

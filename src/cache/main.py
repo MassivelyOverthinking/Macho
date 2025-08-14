@@ -4,8 +4,9 @@
 from typing import List, Union, Any, Optional
 
 from .models import BaseCache
-from .utility import create_cache
+from .utility import create_cache, hash_value
 from .bloom_filter import BloomFilter
+from .errors import BloomFilterException
 
 # --------------- Main Application ---------------
 
@@ -21,6 +22,22 @@ class Cache():
             bloom: bool = False,
             probability: float = 0.5
         ):
+
+        if not isinstance(max_cache_size, int):
+            raise TypeError("Parameter 'max_cache_size' must be of type: int")
+        if not isinstance(ttl, float):
+            raise TypeError("Parameter 'ttl' must be of type: float")
+        if not isinstance(shard_count, int):
+            raise TypeError("Parameter 'shard_count' must be of type: int")
+        if not isinstance(strategy, str):
+            raise TypeError("Parameter 'strategy' must be of type: str")
+        if not isinstance(bloom, bool):
+            raise TypeError("Parameter 'bloom' must be of type: bool")
+        if not isinstance(probability, float):
+            raise TypeError("Parameter 'probability' must be of type: float")
+        if not 0.00 < probability < 1.00:
+            raise ValueError("Probability value must be between 0.00 - 1.00")
+
         self.max_cache_size = max_cache_size
         self.ttl = ttl
         self.shard_count = shard_count
@@ -34,13 +51,13 @@ class Cache():
         elif self.bloom and self.shard_count == 1:
             self.bloom_filter = BloomFilter(self.max_cache_size, self.probability)
         else:
-            self.bloom = None
+            self.bloom_filter = None
 
         self.cache = self._create_caches()
 
     def add(self, key: Any, entry: Any) -> None:
         if self.shard_count > 1:
-            num = hash(key) % self.shard_count
+            num = hash_value(key, self.shard_count)
             if self.bloom_filter:
                 self.bloom_filter[num].add(key)
             self.cache[num].add(key=key, value=entry)
@@ -51,13 +68,13 @@ class Cache():
 
     def get(self, key: Any) -> Optional[Any]:
         if self.shard_count > 1:
-            num = hash(key) % self.shard_count
+            num = hash_value(key, self.shard_count)
             if self.bloom_filter and not self.bloom_filter[num].check(key):
-                return None
+                raise BloomFilterException(key=key)
             return self.cache[num].get(key)
         else:
             if self.bloom_filter and not self.bloom_filter.check(key):
-                return None
+                raise BloomFilterException(key=key)
             return self.cache.get(key)
         
     def clear(self) -> None:
@@ -91,3 +108,6 @@ class Cache():
             policy=self.strategy,
             shards_capacity=shard_size
         )
+    
+    def __repr__(self):
+        return (f"<Cache(size={self.max_cache_size}, ttl={self.ttl}, eviction strategy={self.strategy})>")
