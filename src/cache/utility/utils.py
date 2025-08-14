@@ -4,6 +4,8 @@ from typing import List, Optional, Union, Any
 
 from ..models import BaseCache, LRUCache, FIFOCache, RandomCache
 
+import mmh3
+
 # --------------- Cache-list Function ---------------
 
 cache_list = {
@@ -28,7 +30,8 @@ def check_cache_list(policy: str) -> BaseCache:
     
 
 def hash_value(key: Any, count: int) -> int:
-    return hash(key) % count
+    key_str = str(key)
+    return mmh3.hash(key_str, seed=42, signed=False) % count
     
     
 # --------------- Cache Creation ---------------

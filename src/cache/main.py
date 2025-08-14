@@ -29,6 +29,8 @@ class Cache():
             raise TypeError("Parameter 'ttl' must be of type: float")
         if not isinstance(shard_count, int):
             raise TypeError("Parameter 'shard_count' must be of type: int")
+        if not shard_count > 0:
+            raise ValueError("Shard count value must be positive")
         if not isinstance(strategy, str):
             raise TypeError("Parameter 'strategy' must be of type: str")
         if not isinstance(bloom, bool):
@@ -108,6 +110,10 @@ class Cache():
             policy=self.strategy,
             shards_capacity=shard_size
         )
+    
+    def get_metrics(self):
+        
+
     
     def __repr__(self):
         return (f"<Cache(size={self.max_cache_size}, ttl={self.ttl}, eviction strategy={self.strategy})>")

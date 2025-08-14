@@ -23,17 +23,21 @@ class CacheEntry():
 # --------------- Caching Models ---------------
     
 class BaseCache():
-    __slots__ = ("max_cache_size", "default_ttl", "cache", "lock")
+    __slots__ = ("max_cache_size", "default_ttl", "cache", "lock", "hits", "misses", "evictions")
 
     def __init__(self, max_cache_size: int, default_ttl: float):
         self.max_cache_size = max_cache_size
         self.default_ttl = default_ttl
         self.cache: OrderedDict[Any, CacheEntry] = OrderedDict()
         self.lock = RLock()
+        self.hits = 0
+        self.misses = 0
+        self.evictions = 0
 
     def _purge_expired(self) -> None:
         for key in list(self.cache.keys()):
             if self.cache[key].is_expired():
+                self.evictions += 1
                 del self.cache[key]
     
     def clear(self) -> None:
@@ -51,6 +55,11 @@ class BaseCache():
     @property
     def ttl(self) -> int:
         return self.default_ttl
+    
+    @property
+    def hit_ratio(self) -> float:
+        return self.hits / (self.hits + self.misses)
+        
     
 class LRUCache(BaseCache):
     def __init__(self, max_cache_size: int, default_ttl: float):
@@ -71,8 +80,10 @@ class LRUCache(BaseCache):
             entry = self.cache.get(key)
             if entry is None or entry.is_expired():
                 self.cache.pop(key, None)
+                self.misses += 1
                 return None
             self.cache.move_to_end(key)
+            self.hits += 1
             return entry.value
         
 class FIFOCache(BaseCache):
@@ -94,7 +105,9 @@ class FIFOCache(BaseCache):
             entry = self.cache.get(key)
             if entry is None or entry.is_expired():
                 self.cache.pop(key, None)
+                self.misses += 1
                 return None
+            self.hits += 1
             return entry.value
 
 class RandomCache(BaseCache):
@@ -117,8 +130,11 @@ class RandomCache(BaseCache):
             entry = self.cache.get(key)
             if entry is None or entry.is_expired():
                 self.cache.pop(key, None)
+                self.misses += 1
                 return None
+            self.hits += 1
             return entry.value
+    
 
     
         

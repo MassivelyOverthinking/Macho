@@ -4,6 +4,7 @@ import math
 import mmh3
 
 from bitarray import bitarray
+from typing import Any
 
 # --------------- Bloom Filter Mechanism ---------------
 
@@ -15,20 +16,20 @@ class BloomFilter(object):
         self.bit_array = bitarray(self.size)
         self.bit_array.setall(0)
 
-    def add(self, item):
+    def add(self, item: Any) -> None:
         for i in range(self.hash_count):
             digest = self._hash(item, i) % self.size
 
             self.bit_array[digest] = True
 
-    def check(self, item):
+    def check(self, item: Any) -> None:
         for i in range(self.hash_count):
             digest = self._hash(item, i) % self.size
             if not self.bit_array[digest]:
                 return False
         return True
     
-    def _hash(self, item, seed):
+    def _hash(self, item: Any, seed: Any) -> int:
         return mmh3.hash(item, seed)
 
     @staticmethod
