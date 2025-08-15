@@ -1,9 +1,9 @@
 # --------------- Imports ---------------
 
 from threading import RLock
-from typing import Any
+from typing import Any, Dict, Optional
 from collections import OrderedDict, deque
-from typing import Optional
+from statistics import median
 
 import time
 import random
@@ -86,10 +86,25 @@ class BaseCache():
         return self.hits / total if total else 0.0
     
     @property
-    def average_lifespan(self) -> float:
+    def metric_lifespan(self) -> Dict[str, float]:
         if not self.lifespan:
-            return 0.0
-        return sum(self.lifespan) / len(self.lifespan)
+            raise ValueError("No lifespan data currently available")
+        
+        max_value = max(self.lifespan)
+        min_value = min(self.lifespan)
+        count = len(self.lifespan)
+        total_value = sum(self.lifespan)
+        avg_lifespan = total_value / count
+        median_value = median(self.lifespan)
+        
+        return {
+            "max": max_value,
+            "min": min_value,
+            "count": count,
+            "total": total_value,
+            "average": avg_lifespan,
+            "median": median_value
+        }
     
     @property
     def memory_size(self):
