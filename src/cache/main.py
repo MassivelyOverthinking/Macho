@@ -111,9 +111,5 @@ class Cache():
             shards_capacity=shard_size
         )
     
-    def get_metrics(self):
-        
-
-    
     def __repr__(self):
         return (f"<Cache(size={self.max_cache_size}, ttl={self.ttl}, eviction strategy={self.strategy})>")
