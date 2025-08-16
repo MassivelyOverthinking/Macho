@@ -23,5 +23,5 @@ class MetricsLifespanException(Exception):
     """
     Error raised when cache's 'lifespan' list is without values.
     """
-    def __init__(self):
-        super().__init__("No data related to cache's lifespan is currently available")
+    def __init__(self, message: str = "No data related to cache's lifespan is currently available"):
+        super().__init__(message)

@@ -14,12 +14,13 @@ import sys
 # --------------- Entry Model ---------------
 
 class CacheEntry():
-    __slots__ = ("value", "expiry", "creation")
+    __slots__ = ("value", "expiry", "creation", "last_access_time")
 
     def __init__(self, value: Any, ttl: float):
         self.value = value
         self.creation = time.monotonic()
         self.expiry = self.creation + ttl
+        self.last_access_time = self.creation
 
     def lifespan(self) -> float:
         return time.monotonic() - self.creation
@@ -90,6 +91,10 @@ class BaseCache():
         return self.default_ttl
     
     @property
+    def total_requests(self) -> int:
+        return self.hits + self.misses
+    
+    @property
     def hit_ratio(self) -> float:
         total = self.hits + self.misses
         return self.hits / total if total else 0.0
@@ -123,7 +128,7 @@ class BaseCache():
         return size
     
     @property
-    def latencies(self):
+    def latencies(self) -> Dict[str, float]:
         latencies = {}
 
         if self.add_latency:
@@ -187,6 +192,7 @@ class LRUCache(BaseCache):
             self.cache.move_to_end(key)
             self.hits += 1
             end_time = time.monotonic()
+            entry.last_access_time = end_time
             self.get_latency.append(end_time - start_time)
             return entry.value
         
@@ -219,6 +225,7 @@ class FIFOCache(BaseCache):
                 return None
             self.hits += 1
             end_time = time.monotonic()
+            entry.last_access_time = end_time
             self.get_latency.append(end_time - start_time)
             return entry.value
 
@@ -252,6 +259,7 @@ class RandomCache(BaseCache):
                 return None
             self.hits += 1
             end_time = time.monotonic()
+            entry.last_access_time = end_time
             self.get_latency.append(end_time - start_time)
             return entry.value
     
