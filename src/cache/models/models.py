@@ -104,20 +104,16 @@ class BaseCache():
         if not self.lifespan:
             raise MetricsLifespanException()
         
-        max_value = max(self.lifespan)
-        min_value = min(self.lifespan)
+        total = sum(self.lifespan)
         count = len(self.lifespan)
-        total_value = sum(self.lifespan)
-        avg_lifespan = total_value / count
-        median_value = median(self.lifespan)
         
         return {
-            "max": max_value,
-            "min": min_value,
+            "max": max(self.lifespan),
+            "min": min(self.lifespan),
             "count": count,
-            "total": total_value,
-            "average": avg_lifespan,
-            "median": median_value
+            "total": total,
+            "average": total / count,
+            "median": median(self.lifespan)
         }
     
     @property
@@ -146,6 +142,32 @@ class BaseCache():
             raise MetricsLatencyException("No data related to 'get' latency currently available")
 
         return latencies
+
+    @property
+    def metrics(self) -> Dict[str, Any]:
+        metrics = {
+            "current_size": self.current_size,
+            "max_size": self.max_size,
+            "ttl": self.ttl,
+            "hits": self.hits,
+            "misses": self.misses, 
+            "total_requests": self.total_requests,
+            "hit_ratio": self.hit_ratio,
+            "evictions": self.evictions,
+            "memory_size": self.memory_size,
+        }
+
+        try:
+            metrics["lifespan_metrics"] = self.metric_lifespan
+        except MetricsLifespanException:
+            metrics["lifespan_metrics"] = {}
+
+        try:
+            metrics["latencies"] = self.latencies
+        except MetricsLatencyException:
+            metrics["latencies"] = {}
+
+        return metrics 
     
     def __contains__(self, key: Any) -> bool:
         with self.lock:

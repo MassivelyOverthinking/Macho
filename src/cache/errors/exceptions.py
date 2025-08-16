@@ -12,6 +12,14 @@ class BloomFilterException(Exception):
         super().__init__(f"Key: {key} is propably not present (filtered by Bloom Filter)")
         self.key = key
 
+class ShardException(Exception):
+    """
+    Error raised when shard capacity values are not currently available.
+    """
+
+    def __init__(self, message: str = "Must provide 'shards_capacity' when creating shared cache"):
+        super().__init__(message)
+
 class MetricsLatencyException(Exception):
     """
     Error raised when latency data is not currently available

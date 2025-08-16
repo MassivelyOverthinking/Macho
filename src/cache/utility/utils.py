@@ -3,6 +3,7 @@
 from typing import List, Optional, Union, Any
 
 from ..models import BaseCache, LRUCache, FIFOCache, RandomCache
+from ..errors import ShardException
 
 import mmh3
 
@@ -60,7 +61,7 @@ def create_cache(
     shards: int, 
     policy: str,
     shards_capacity: Optional[List[int]] = None
-    ) -> Union[BaseCache, List[BaseCache]]:
+) -> Union[BaseCache, List[BaseCache]]:
     if shards == 1:
         return _create_single_cache(
         capacity_num=max_capacity,
@@ -69,7 +70,7 @@ def create_cache(
         )
     else:
         if shards_capacity is None:
-            raise ValueError("Must provide 'shards_capacity' when creating shared cache")
+            raise ShardException("Must provide 'shards_capacity' when creating shared cache")
         return _create_sharded_cache(
             ttl=ttl,
             num=shards,
