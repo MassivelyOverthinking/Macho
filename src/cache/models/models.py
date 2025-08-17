@@ -206,7 +206,10 @@ class LRUCache(BaseCache):
     def get(self, key: Any) -> Optional[Any]:
         with self.lock:
             start_time = time.monotonic()
+            self._purge_expired()
+
             entry = self.cache.get(key)
+
             if entry is None or entry.is_expired():
                 self.cache.pop(key, None)
                 self.misses += 1
@@ -240,7 +243,10 @@ class FIFOCache(BaseCache):
     def get(self, key: Any) -> Optional[Any]:
         with self.lock:
             start_time = time.monotonic()
+            self._purge_expired()
+
             entry = self.cache.get(key)
+
             if entry is None or entry.is_expired():
                 self.cache.pop(key, None)
                 self.misses += 1
@@ -274,7 +280,10 @@ class RandomCache(BaseCache):
     def get(self, key: Any) -> Optional[Any]:
         with self.lock:
             start_time = time.monotonic()
+            self._purge_expired()
+
             entry = self.cache.get(key)
+            
             if entry is None or entry.is_expired():
                 self.cache.pop(key, None)
                 self.misses += 1
