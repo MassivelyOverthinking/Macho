@@ -10,6 +10,9 @@ from threading import RLock
 # --------------- Bloom Filter Mechanism ---------------
 
 class BloomFilter(object):
+    __slots__ = ("probability", "lock", "size", "hash_count", "bit_array")
+
+
     def __init__(self, items_count, probability):
         self.probability = probability
         self.lock = RLock()

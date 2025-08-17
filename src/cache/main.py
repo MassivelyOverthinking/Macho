@@ -1,7 +1,7 @@
 # --------------- Imports ---------------
 
 
-from typing import List, Union, Any, Optional
+from typing import List, Union, Any, Optional, Dict
 
 from .models import BaseCache
 from .utility import create_cache, hash_value
@@ -78,6 +78,15 @@ class Cache():
             if self.bloom_filter and not self.bloom_filter.check(key):
                 raise BloomFilterException(key=key)
             return self.cache.get(key)
+        
+    def get_metrics(self) -> Union[List[Dict[str, Any]], Dict[str, Any]]:
+        if isinstance(self.cache, list):
+            shard_dict = {}
+            for num, shard in enumerate(self.cache):
+                shard_dict[num] = shard.metrics()
+            return shard_dict
+        else:
+            return self.cache.metrics()
         
     def clear(self) -> None:
         if isinstance(self.cache, list):
