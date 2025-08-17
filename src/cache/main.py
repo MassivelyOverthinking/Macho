@@ -79,7 +79,7 @@ class Cache():
                 raise BloomFilterException(key=key)
             return self.cache.get(key)
         
-    def get_metrics(self) -> Union[List[Dict[str, Any]], Dict[str, Any]]:
+    def get_metrics(self) -> Union[Dict[int, Dict[str, Any]], Dict[str, Any]]:
         if isinstance(self.cache, list):
             shard_dict = {}
             for num, shard in enumerate(self.cache):
