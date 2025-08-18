@@ -1,6 +1,6 @@
 # --------------- Imports ---------------
 
-from exceptions import BloomFilterException, MetricsLifespanException, MetricsLatencyException, ShardException
+from .exceptions import BloomFilterException, MetricsLifespanException, MetricsLatencyException, ShardException
 
 # --------------- Package Manager ---------------
 

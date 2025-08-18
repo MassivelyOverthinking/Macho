@@ -11,6 +11,35 @@ from .errors import BloomFilterException
 # --------------- Main Application ---------------
 
 class Cache():
+    """
+    A shared in-memory optional Bloom filer support and configurable Eviction Strategies.
+
+    The Cache-class supports time-based expiration, sharding, probabilistic item/value existence
+    checks by use of Bloom Filter. Ideal for high-performance caching scenarios wherein memory
+    and eviction strategy matters.
+    
+    ----- Parameters -----
+    max_cache_size: int
+        Maximum number of items/values that can be stored across shard (Defaults to 100).
+    ttl: float
+        Tie-to-live for each cache entry, portrayed in seconds (Defaults to 600.0).
+    shard_count: int
+        The number of shards the caching system shares (Defaults to 1).
+    strategy: str
+        The strategy used to evict/delete expired cache entries (Defaults to 'lru').
+    bloom: bool
+        Actives the addition of a Bloom Filter for probabilistic membership checking (Defaults to False).
+    probability: float
+        The probability that the Bloom Filter produces a false positive
+        (Bloom Filter must be active to function, and value must be between 0.0 - 1.0). 
+        Defaults to 0.0.
+
+    ----- Exceptions -----
+    TypeError:
+        Raised if the different variables do not match the desired data types.
+    ValueError:
+        Raised if numerical data types are outside their desired range.
+    """
     __slots__ = ("max_cache_size", "ttl", "shard_count", "strategy", "bloom", "probability")
 
     def __init__(
@@ -58,6 +87,18 @@ class Cache():
         self.cache = self._create_caches()
 
     def add(self, key: Any, entry: Any) -> None:
+        """
+        Adds new key-value pair to teh current cache.
+
+        If sharding is enabled, the key is allocated to the correct shard based on it's hashed value.
+        If Bloom filter is enabled, the key is stored in the filter's bitarry for future existence checks.
+
+        ----- Parameters -----
+        key: Any
+            The identifying key for the cache entry.
+        value: Any
+            The item/value stored under the associated key.
+        """
         if self.shard_count > 1:
             num = hash_value(key, self.shard_count)
             if self.bloom_filter:
@@ -69,6 +110,25 @@ class Cache():
             self.cache.add(key=key, value=entry)
 
     def get(self, key: Any) -> Optional[Any]:
+        """
+        Retrieves the value associated with the given key from the caching system.
+
+        If sharding is enabled, the item/value gets retrieved from the appropriate shard.
+        If Bloom Filter is enabled, the caching system initially checksfor its existnece in the BloomFilter
+        bitarry, before making unecceasry calls.
+
+        ----- Parameters -----
+        key: Any
+            The key-value associated with the given object.
+
+        ----- Return -----
+        Optional[Any]
+            The value associated with the object or None if not found or expired.
+
+        ----- Exceptions -----
+        BloomFilterException
+            Raised if the Bloom Filter determines that the key is not present in the cache.
+        """
         if self.shard_count > 1:
             num = hash_value(key, self.shard_count)
             if self.bloom_filter and not self.bloom_filter[num].check(key):

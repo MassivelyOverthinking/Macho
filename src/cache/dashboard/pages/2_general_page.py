@@ -25,6 +25,7 @@ else:
     st.subheader("Configuration")
     st.json({
         "Max Cache Size": cache.max_cache_size,
+        "Current Cache Size": cache.current_size,
         "Time-to-live": cache.ttl,
         "Eviction Strategy": cache.strategy,
         "Shard Count": cache.shard_count,
