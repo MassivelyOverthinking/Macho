@@ -53,6 +53,30 @@ class TestFIFOCache(unittest.TestCase):
         self.assertNotIn("a", cache)
         self.assertNotIn("b", cache)
 
+    def test_fifocache_clear(self):
+        cache = FIFOCache(1, 1.0)
+        cache.add("a", 1)
+        cache.clear()
+
+        self.assertEqual(cache.current_size, 0)
+
+    def test_fifiocache_lifespan_metrics(self):
+        cache = FIFOCache(1, 1.0)
+
+        with self.assertRaises(MetricsLifespanException):
+            _ = cache.lifespan
+
+    def test_fifocache_hits_and_misses(self):
+        cache = FIFOCache(1, 1.0)
+        cache.add("a", 1)
+        test1 = cache.get("a")
+        test2 = cache.get("a")
+        test3 = cache.get("b")
+
+        self.assertEqual(cache.hits, 2)
+        self.assertEqual(cache.misses, 1)
+        self.assertEqual(cache.total_requests, 3)
+        self.assertAlmostEqual(cache.hit_ratio, 2/3, places=2)
 
 if __name__ == "__main__":
     unittest.main()
