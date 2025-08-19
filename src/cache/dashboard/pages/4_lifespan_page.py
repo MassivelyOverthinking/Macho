@@ -21,6 +21,8 @@ st.subheader("Metrics & Data visualisation regarding individual and overall life
 
 # Access stored cache in Session State
 cache = st.session_state.get("macho_cache")
+
+# Manage Streamlit tabs
 tabs = st.tabs(["📊 Summary", "📉 Histogram", "📦 Box Plot"])
 
 if cache is None:
