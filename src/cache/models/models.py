@@ -1,7 +1,7 @@
 # --------------- Imports ---------------
 
 from threading import RLock
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, List
 from collections import OrderedDict, deque
 from statistics import median
 
@@ -97,7 +97,7 @@ class BaseCache():
     @property
     def hit_ratio(self) -> float:
         total = self.hits + self.misses
-        return self.hits / total if total else 0.0
+        return round(self.hits / total, 2) if total else 0.00
     
     @property
     def metric_lifespan(self) -> Dict[str, float]:

@@ -74,5 +74,21 @@ class TestLRUCache(unittest.TestCase):
         with self.assertRaises(MetricsLifespanException):
             _ = cache.metric_lifespan
 
+    def test_hits_and_misses(self):
+        cache = LRUCache(3, 10.0)
+
+        cache.add("a", 1)
+        cache.add("b", 2)
+        cache.add("c", 3)
+
+        tst1 = cache.get("a")
+        tst2 = cache.get("b")
+        tst3 = cache.get("h")
+
+        self.assertEqual(cache.hits, 2)
+        self.assertEqual(cache.misses, 1)
+        self.assertAlmostEqual(cache.hit_ratio, 2/3, places=2)
+        self.assertEqual(cache.total_requests, 3)
+
 if __name__ == "__main__":
     unittest.main()
