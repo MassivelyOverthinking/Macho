@@ -1,6 +1,7 @@
 # --------------- Imports ---------------
 
 from main import Cache
+from ..dashboard import load_from_pickle
 
 from ...errors import MetricsLifespanException
 
@@ -20,7 +21,14 @@ st.divider()
 st.subheader("Metrics & Data visualisation regarding individual and overall lifespan of caching entries.")
 
 # Access stored cache in Session State
-cache = st.session_state.get("macho_cache")
+try:
+    if "macho_cache" not in st.session_state:
+        st.session_state.macho_cache = load_from_pickle()
+
+    cache = st.session_state.macho_cache
+except Exception as e:
+    st.error(f"Failed ot load cache {e}")
+    st.stop()
 
 # Manage Streamlit tabs
 tabs = st.tabs(["📊 Summary", "📉 Histogram", "📦 Box Plot"])

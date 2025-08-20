@@ -1,6 +1,7 @@
 # --------------- Imports ---------------
 
 from main import Cache
+from ..dashboard import load_from_pickle
 
 import streamlit as st
 
@@ -15,7 +16,15 @@ st.title("General Cache Information ℹ️")
 st.divider()
 
 # Access stored cache in Session State
-cache = st.session_state.get("macho_cache")
+try:
+    if "macho_cache" not in st.session_state:
+        st.session_state.macho_cache = load_from_pickle()
+
+    cache = st.session_state.macho_cache
+except Exception as e:
+    st.error(f"Failed ot load cache {e}")
+    st.stop()
+
 
 if cache is None:
     st.error("No caching metrics found in session state")
