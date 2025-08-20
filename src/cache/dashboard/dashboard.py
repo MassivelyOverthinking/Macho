@@ -1,6 +1,6 @@
 # --------------- Imports ---------------
 
-from main import Cache
+from ..main import Cache
 
 import streamlit as st
 import streamlit.web.cli as stcli

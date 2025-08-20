@@ -1,6 +1,6 @@
 # --------------- Imports ---------------
 
-from dashboard import run_dashboard
+from .dashboard import run_dashboard
 
 # --------------- Package Manager ---------------
 

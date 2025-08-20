@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "macho"
 version = "0.0.1"
-description = "An in-memory caching system with configurable eviction strategies".
+description = "An in-memory caching system with configurable eviction strategies"
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
 authors = [
@@ -43,7 +43,13 @@ classifiers = [
     "Topic :: Utilities",
 ]
 
-dependencies = []
+dependencies = [
+    "bitarray>=3.5.0",
+    "mmh3>=5.1.0",
+    "pandas>=2.3.1",
+    "plotly>=6.3.0",
+    "streamlit>=1.48.1"
+]
 
 [project.optional-dependencies]
 dev = [

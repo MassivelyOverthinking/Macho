@@ -40,7 +40,7 @@ class TestFIFOCache(unittest.TestCase):
         self.assertEqual(cache.current_size, 2)
 
     def test_fifiocache_eviction(self):
-        cache = FIFOCache(3, 5.0)
+        cache = FIFOCache(3, 10.0)
         cache.add("a", 1)
         cache.add("b", 1)
         cache.add("c", 1)
@@ -64,7 +64,7 @@ class TestFIFOCache(unittest.TestCase):
         cache = FIFOCache(1, 1.0)
 
         with self.assertRaises(MetricsLifespanException):
-            _ = cache.lifespan
+            _ = cache.metric_lifespan
 
     def test_fifocache_hits_and_misses(self):
         cache = FIFOCache(1, 1.0)

@@ -238,7 +238,7 @@ class FIFOCache(BaseCache):
             self.cache.pop(key, None)
 
             while len(self.cache) >= self.max_cache_size:
-                removed = self.cache.popitem()
+                removed = self.cache.popitem(last=False)
                 self.evictions += 1
                 self.lifespan.append(removed[1].lifespan())
             self.cache[key] = CacheEntry(value, self.default_ttl)
