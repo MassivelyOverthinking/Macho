@@ -15,16 +15,23 @@ requires-python = ">=3.8"
 
 keywords = [
     "caching",
+    "cache",
+    "distributed cache",
     "memory efficiency",
-    "performance",
-    "monitoring",
-    "python",
-    "decorator",
+    "in-memory",
+    "eviction strategies",
+    "lru",
+    "fifo",
+    "time-to-live",
+    "sharding",
+    "bloom filter"
     "streamlit",
-    "freeze",
-    "immutability",
+    "metrics",
     "interning",
-    "lightweight classes"
+    "lightweight",
+    "lightweight classes",
+    "high-performance",
+    "probabilistic data structures"
 ]
 
 classifiers = [
