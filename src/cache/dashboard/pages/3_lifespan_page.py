@@ -1,20 +1,15 @@
 # --------------- Imports ---------------
 
-from main import Cache
-from ..dashboard import load_from_pickle
+from src.cache.main import Cache
+from src.cache.dashboard import load_from_pickle
 
-from ...errors import MetricsLifespanException
+from src.cache.errors import MetricsLifespanException
 
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 
 # --------------- Lifespan Metrics ---------------
-
-st.set_page_config(
-    page_title="Lifespan Metrics",
-    page_icon="⌛"
-)
 
 st.title("Entry Lifespan Data ⌛")
 st.divider()
@@ -26,6 +21,11 @@ try:
         st.session_state.macho_cache = load_from_pickle()
 
     cache = st.session_state.macho_cache
+
+    st.write("Loaded cache type:", type(cache))
+    st.write("Has 'lifespan'? ", hasattr(cache, 'lifespan'))
+    st.write("Has 'add_latency'? ", hasattr(cache, 'add_latency'))
+    st.write("From module: ", cache.__class__.__module__)
 except Exception as e:
     st.error(f"Failed ot load cache {e}")
     st.stop()
@@ -41,7 +41,7 @@ else:
     if isinstance(cache.cache, list): # Shared Cache
 
         try:
-            lifespan_data = [ch.lifespan_metrics for ch in cache.cache]
+            lifespan_data = [ch.metric_lifespan for ch in cache.cache]
             all_lifespan = [
                 {"Shard": i, "Lifespan": val}
                 for i, entry in enumerate(cache.cache)

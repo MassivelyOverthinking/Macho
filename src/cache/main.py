@@ -189,5 +189,40 @@ class Cache():
             shards_capacity=shard_size
         )
     
+    @property
+    def current_size(self):
+        if isinstance(self.cache, list):
+            return sum([shard.current_size for shard in self.cache])
+        else:
+            return self.cache.current_size
+    
+    @property
+    def total_requests(self):
+        if isinstance(self.cache, list):
+            return sum([shard.total_requests for shard in self.cache])
+        else:
+            return self.cache.total_requests
+    
+    @property
+    def latencies(self):
+        if isinstance(self.cache, list):
+            return [shard.latencies for shard in self.cache]
+        else:
+            return self.cache.latencies
+    
+    @property
+    def metric_lifespan(self):
+        if isinstance(self.cache, list):
+            return [shard.metric_lifespan for shard in self.cache]
+        else:
+            return self.cache.metric_lifespan
+    
+    @property
+    def metrics(self):
+        if isinstance(self.cache, list):
+            return [shard.metrics for shard in self.cache]
+        else:
+            return self.cache.metrics
+
     def __repr__(self):
         return (f"<Cache(size={self.max_cache_size}, ttl={self.ttl}, eviction strategy={self.strategy})>")

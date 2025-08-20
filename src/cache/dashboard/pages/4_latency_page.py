@@ -1,20 +1,15 @@
 # --------------- Imports ---------------
 
-from main import Cache
-from ..dashboard import load_from_pickle
+from src.cache.main import Cache
+from src.cache.dashboard import load_from_pickle
 
-from ...errors import MetricsLatencyException
+from src.cache.errors import MetricsLatencyException
 
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 
 # --------------- Latency Metrics ---------------
-
-st.set_page_config(
-    page_title="Latency Metrics",
-    page_icon="⏱️"
-)
 
 st.title("Function Latency Data ⏱️")
 st.divider()
@@ -26,6 +21,11 @@ try:
         st.session_state.macho_cache = load_from_pickle()
 
     cache = st.session_state.macho_cache
+
+    st.write("Loaded cache type:", type(cache))
+    st.write("Has 'lifespan'? ", hasattr(cache, 'lifespan'))
+    st.write("Has 'add_latency'? ", hasattr(cache, 'add_latency'))
+    st.write("From module: ", cache.__class__.__module__)
 except Exception as e:
     st.error(f"Failed ot load cache {e}")
     st.stop()
