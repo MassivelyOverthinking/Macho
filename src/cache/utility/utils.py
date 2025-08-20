@@ -4,8 +4,13 @@ from typing import List, Optional, Union, Any
 
 from ..models import BaseCache, LRUCache, FIFOCache, RandomCache
 from ..errors import ShardException
+from ..logging import get_logger
 
 import mmh3
+
+# --------------- Logger Setup ---------------
+
+logger = get_logger(__name__)
 
 # --------------- Cache-list Function ---------------
 

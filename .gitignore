@@ -35,3 +35,6 @@ Thumbs.db
 
 # Distribution / Packaging
 dist/
+
+# Testing
+tests/

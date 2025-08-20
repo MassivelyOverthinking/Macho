@@ -1,12 +1,16 @@
 # --------------- Imports ---------------
 
-
 from typing import List, Union, Any, Optional, Dict
 
 from .models import BaseCache
 from .utility import create_cache, hash_value
 from .bloom_filter import BloomFilter
 from .errors import BloomFilterException
+from .logging import get_logger
+
+# --------------- Logger Setup ---------------
+
+logger = get_logger(__name__)
 
 # --------------- Main Application ---------------
 
@@ -86,6 +90,8 @@ class Cache():
 
         self.cache = self._create_caches()
 
+        logger.info("Cache object successfully initialized")
+
     def add(self, key: Any, entry: Any) -> None:
         """
         Adds new key-value pair to teh current cache.
@@ -154,6 +160,7 @@ class Cache():
                 shard.clear()
         else:
             self.cache.clear()
+        logger.info("Cache succesfully cleared!")
 
     def _get_shard_size(self) -> List[int]:
         base = self.max_cache_size // self.shard_count

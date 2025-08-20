@@ -6,10 +6,15 @@ from collections import OrderedDict, deque
 from statistics import median
 
 from ..errors import MetricsLifespanException, MetricsLatencyException
+from ..logging import get_logger
 
 import time
 import random
 import sys
+
+# --------------- Logger Setup ---------------
+
+logger = get_logger(__name__)
 
 # --------------- Entry Model ---------------
 
