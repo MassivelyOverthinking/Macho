@@ -44,7 +44,7 @@ class Cache():
     ValueError:
         Raised if numerical data types are outside their desired range.
     """
-    __slots__ = ("max_cache_size", "ttl", "shard_count", "strategy", "bloom", "probability")
+    __slots__ = ("max_cache_size", "ttl", "shard_count", "strategy", "bloom", "probability", "bloom_filter", "cache")
 
     def __init__(
             self, 
