@@ -1,7 +1,7 @@
 # --------------- Imports ---------------
 
 from threading import RLock
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, Optional
 from collections import OrderedDict, deque
 from statistics import median
 
@@ -36,6 +36,7 @@ class CacheEntry():
     def __repr__(self):
         return f"<CacheEntry(value={self.value}, expires_in={self.expiry - time.monotonic():.2f}s)>"
     
+
 # --------------- Caching Models ---------------
     
 class BaseCache():
@@ -74,6 +75,9 @@ class BaseCache():
                 del self.cache[key]
     
     def clear(self) -> None:
+        """
+        Deletes and resets the individual variables and data metrics.
+        """
         with self.lock:
             self.cache.clear()
             self.hits = 0
@@ -175,11 +179,13 @@ class BaseCache():
         return metrics
     
     def __getstate__(self):
+        # Removes RLocks to allow for Pickling/Serialization.
         state = self.__dict__.copy()
         state.pop("lock", None)
         return state
     
     def __setstate__(self, state):
+        # Reinstates RLocks after returning from serialization.
         self.__dict__.update(state)
         self.lock = RLock()
     

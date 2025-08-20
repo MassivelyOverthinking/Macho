@@ -90,7 +90,7 @@ class Cache():
 
         self.cache = self._create_caches()
 
-        logger.info(f"Cache object {self.__repr__} successfully initialized")
+        logger.info(f"Cache object {repr(self)} successfully initialized")
 
     def add(self, key: Any, entry: Any) -> None:
         """
@@ -144,6 +144,7 @@ class Cache():
         else:
             if self.bloom_filter and not self.bloom_filter.check(key):
                 raise BloomFilterException(key=key)
+            logger.debug(f"Cache entry {key} successfully retreived")
             return self.cache.get(key)
         
         

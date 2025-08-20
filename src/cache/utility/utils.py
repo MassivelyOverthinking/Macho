@@ -14,8 +14,8 @@ logger = get_logger(__name__)
 
 # --------------- Cache-list Function ---------------
 
-cache_list = {
-    "lru": LRUCache,
+cache_list = {      # List of supported Eviction Strategies and corresponding cache-classes
+    "lru": LRUCache,                
     "fifo": FIFOCache,
     "random": RandomCache
 }
