@@ -26,7 +26,7 @@ class Cache():
     max_cache_size: int
         Maximum number of items/values that can be stored across shard (Defaults to 100).
     ttl: float
-        Tie-to-live for each cache entry, portrayed in seconds (Defaults to 600.0).
+        Time-to-live for each cache entry, portrayed in seconds (Defaults to 600.0).
     shard_count: int
         The number of shards the caching system shares (Defaults to 1).
     strategy: str
@@ -90,7 +90,7 @@ class Cache():
 
         self.cache = self._create_caches()
 
-        logger.info("Cache object successfully initialized")
+        logger.info(f"Cache object {self.__repr__} successfully initialized")
 
     def add(self, key: Any, entry: Any) -> None:
         """
@@ -114,6 +114,7 @@ class Cache():
             if self.bloom_filter:
                 self.bloom_filter.add(key)
             self.cache.add(key=key, value=entry)
+        logger.debug(f"Cache entry: {entry} with key: {key} added to cache.")
 
     def get(self, key: Any) -> Optional[Any]:
         """
@@ -144,6 +145,7 @@ class Cache():
             if self.bloom_filter and not self.bloom_filter.check(key):
                 raise BloomFilterException(key=key)
             return self.cache.get(key)
+        
         
     def get_metrics(self) -> Union[Dict[int, Dict[str, Any]], Dict[str, Any]]:
         if isinstance(self.cache, list):

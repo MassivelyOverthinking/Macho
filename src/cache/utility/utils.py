@@ -44,6 +44,7 @@ def hash_value(key: Any, count: int) -> int:
     
 def _create_single_cache(capacity_num: int, ttl: float, policy: str) -> BaseCache:
     cache_class = check_cache_list(policy=policy)
+    logger.debug(f"Single cache created with eviction policy {policy}")
     return cache_class(max_cache_size=capacity_num, default_ttl=ttl)
 
     
@@ -56,6 +57,8 @@ def _create_sharded_cache(ttl: float, num: int, shards_capacity: List[int], poli
         cap = shards_capacity[n]                                        # Pick the capacity num from list
         new_cache = cache_class(max_cache_size=cap, default_ttl=ttl)    # Create new class instance with capacity
         shards_list.append(new_cache)                                   # Append new cache class to final list
+        
+    logger.debug(f"{num} Cache Shards created with eviction policy {policy}")
 
     return shards_list
 

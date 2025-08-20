@@ -3,9 +3,15 @@
 import math
 import mmh3
 
+from ..logging import get_logger
+
 from bitarray import bitarray
 from typing import Any
 from threading import RLock
+
+# --------------- Logging Setup ---------------
+
+logger = get_logger(__name__)
 
 # --------------- Bloom Filter Mechanism ---------------
 
@@ -50,6 +56,7 @@ class BloomFilter(object):
         None
         """
         with self.lock:
+            logger.debug(f"Adding item: {item}")
             for i in range(self.hash_count):
                 digest = self._hash(item, i) % self.size
 
@@ -73,6 +80,7 @@ class BloomFilter(object):
                 digest = self._hash(item, i) % self.size
                 if not self.bit_array[digest]:
                     return False
+            logger.debug(f"Check hit (Possible False Positive) for item: {item}")
             return True
     
     def _hash(self, item: Any, seed: Any) -> int:
