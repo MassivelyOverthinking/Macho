@@ -5,7 +5,6 @@ from typing import List, Union, Any, Optional, Dict
 from .models import BaseCache
 from .utility import create_cache, hash_value
 from .bloom_filter import BloomFilter
-from .errors import BloomFilterException
 from .logging import get_logger
 
 # --------------- Logger Setup ---------------
@@ -139,11 +138,13 @@ class Cache():
         if self.shard_count > 1:
             num = hash_value(key, self.shard_count)
             if self.bloom_filter and not self.bloom_filter[num].check(key):
-                raise BloomFilterException(key=key)
+                logger.debug(f"Bloom filter indicates that {key} is not present in shard {num}")
+                return None
             return self.cache[num].get(key)
         else:
             if self.bloom_filter and not self.bloom_filter.check(key):
-                raise BloomFilterException(key=key)
+                logger.debug(f"Bloom filter indicates that {key} is not presetn in cache")
+                return None
             logger.debug(f"Cache entry {key} successfully retreived")
             return self.cache.get(key)
         

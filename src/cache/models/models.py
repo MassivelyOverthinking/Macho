@@ -341,7 +341,7 @@ class RandomCache(BaseCache):
                 random_key = random.choice(list(self.cache.keys()))
                 removed = self.cache.pop(random_key)
                 self.evictions += 1
-                self.lifespan.append(removed[1].lifespan())
+                self.lifespan.append(removed.lifespan())
             self.cache[key] = CacheEntry(value, self.default_ttl)
             end_time = time.monotonic()
             self.add_latency.append(end_time - start_time)

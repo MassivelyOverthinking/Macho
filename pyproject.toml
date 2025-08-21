@@ -24,7 +24,7 @@ keywords = [
     "fifo",
     "time-to-live",
     "sharding",
-    "bloom filter"
+    "bloom filter",
     "streamlit",
     "metrics",
     "interning",
