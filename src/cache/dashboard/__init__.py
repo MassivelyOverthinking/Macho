@@ -1,6 +1,6 @@
 # --------------- Imports ---------------
 
-from .dashboard import run_dashboard, PICKLE_PATH, load_from_pickle
+from .dashboard import PICKLE_PATH, load_from_pickle, run_dashboard
 
 # --------------- Package Manager ---------------
 
