@@ -215,7 +215,10 @@ class BaseCache():
                 for slot in cls.__slots__:
                     if slot == "lock":
                         continue
-                    setattr(self, slot, state.get(slot, None))
+                    if slot in ("lifespan", "get_latency", "add_latency"):
+                        setattr(self, slot, deque(state.get(slot, []), maxlen=1000))
+                    else:
+                        setattr(self, slot, state.get(slot, None))
         self.lock = RLock()
 
     
