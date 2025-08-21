@@ -56,7 +56,7 @@ class BloomFilter(object):
         None
         """
         with self.lock:
-            logger.debug(f"Adding item: {item}")
+            logger.debug(f"Adding item: {item} to Bloom filter")
             for i in range(self.hash_count):
                 digest = self._hash(item, i) % self.size
 

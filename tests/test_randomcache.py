@@ -38,7 +38,15 @@ class TestRandomCache(unittest.TestCase):
 
         self.assertEqual(cache.current_size, 2)
 
-    # test_randomcache_eviction()
+    def test_randomcache_eviction(self):
+        cache = RandomCache(3, 2.0)
+        cache.add("a", 1)
+        cache.add("b", 2)
+        cache.add("c", 3)
+        cache.add("d", 4)
+        cache.add("e", 5)
+
+        self.assertEqual(cache.current_size, 3)
         
     def test_randomcache_clear(self):
         cache = RandomCache(1, 2.0)

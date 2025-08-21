@@ -40,6 +40,21 @@ class CacheEntry():
 # --------------- Caching Models ---------------
     
 class BaseCache():
+    """
+    The base-class all subsequent cache-class inherits from.
+
+    ----- Parameters -----
+    max_cache_size: int
+        Maximum number of items/values capable of being stored in the cache.
+    default_ttl: float
+        Time-to-live for individual data entries stored in the cache, protrayed in seconds.
+    
+    ----- Exceptions -----
+    MetricLifespanException
+        Raised if no available lifespan data metrics when metric_lifespan() is called.
+    MetricLatencyException
+        Raised if no available latency data metrics when latencies() is called.
+    """
     __slots__ = (
         "max_cache_size",
         "default_ttl",
@@ -67,6 +82,9 @@ class BaseCache():
 
 
     def _purge_expired(self) -> None:
+        """
+        Iterates through current data storage and deletes expired cache entries.
+        """
         for key in list(self.cache.keys()):
             if self.cache[key].is_expired():
                 self.evictions += 1
@@ -76,7 +94,8 @@ class BaseCache():
     
     def clear(self) -> None:
         """
-        Deletes and resets the individual variables and data metrics.
+        Deletes and resets cache-object's individual variables and data metrics.
+        Utilizes RLock for Thread safesty.
         """
         with self.lock:
             self.cache.clear()
@@ -205,6 +224,16 @@ class BaseCache():
         
     
 class LRUCache(BaseCache):
+    """
+    Cache-class that utilizes LRU (Last Recently Used) eviction strategy.
+    Inherits functionality and properties from BaseCache.
+
+    ----- Parameters -----
+    max_cache_size: int
+        Maximum number of items/values capable of being stored in the cache.
+    default_ttl: float
+        Time-to-live for individual data entries stored in the cache, protrayed in seconds.
+    """
     def __init__(self, max_cache_size: int, default_ttl: float):
         super().__init__(max_cache_size, default_ttl)
 
@@ -242,6 +271,16 @@ class LRUCache(BaseCache):
             return entry.value
         
 class FIFOCache(BaseCache):
+    """
+    Cache-class that utilizes FIFO (First in, First out) eviction strategy.
+    Inherits functionality and properties from BaseCache.
+
+    ----- Parameters -----
+    max_cache_size: int
+        Maximum number of items/values capable of being stored in the cache.
+    default_ttl: float
+        Time-to-live for individual data entries stored in the cache, protrayed in seconds.
+    """
     def __init__(self, max_cache_size: int, default_ttl: float):
         super().__init__(max_cache_size, default_ttl)
 
@@ -278,6 +317,16 @@ class FIFOCache(BaseCache):
             return entry.value
 
 class RandomCache(BaseCache):
+    """
+    Cache-class that utilizes Random (Randomized entries) eviction strategy.
+    Inherits functionality and properties from BaseCache.
+
+    ----- Parameters -----
+    max_cache_size: int
+        Maximum number of items/values capable of being stored in the cache.
+    default_ttl: float
+        Time-to-live for individual data entries stored in the cache, protrayed in seconds.
+    """
     def __init__(self, max_cache_size: int, default_ttl: float):
         super().__init__(max_cache_size, default_ttl)
 

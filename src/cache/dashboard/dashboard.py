@@ -1,6 +1,7 @@
 # --------------- Imports ---------------
 
 from src.cache.main import Cache
+from src.cache.logging import get_logger
 
 import streamlit.web.cli as stcli
 import streamlit as st
@@ -10,7 +11,11 @@ import sys
 import os
 import tempfile
 
-# --------------- Metrics Dashboard ---------------
+# --------------- Logging setup ---------------
+
+logger = get_logger(__name__)
+
+# --------------- Pickle Path ---------------
 
 PICKLE_PATH = os.environ.get(
     "MACHO_CACHE_PICKLE_PATH",
@@ -37,6 +42,8 @@ st.markdown(
     - (Not yet implemented)
     """
 )
+
+# --------------- Launch Metrics Dashboard ---------------
     
 def load_from_pickle() -> Cache:
     if not os.path.exists(PICKLE_PATH):
@@ -55,6 +62,9 @@ def run_dashboard(cache: Cache) -> None:
     script_path = os.path.abspath(__file__)
     dsh_dir = os.path.dirname(script_path)
     final_path = os.path.join(dsh_dir, "dashboard.py")
+
+    logger.debug(f"Launching Streamlit dashboard from path {final_path}")
+
     sys.argv = ["streamlit", "run", final_path]
     sys.exit(stcli.main())
     
