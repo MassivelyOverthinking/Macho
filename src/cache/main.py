@@ -225,6 +225,13 @@ class Cache():
             return [shard.metrics for shard in self.cache]
         else:
             return self.cache.metrics
+        
+    def __getstate__(self):
+        return {slot: getattr(self, slot, None) for slot in self.__slots__}
+    
+    def __setstate__(self, state: dict):
+        for slot in self.__slots__:
+            setattr(self, slot, state.get(slot, None))
 
     def __repr__(self):
         return (f"<Cache(size={self.max_cache_size}, ttl={self.ttl}, eviction strategy={self.strategy})>")

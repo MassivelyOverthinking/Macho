@@ -21,6 +21,7 @@ PICKLE_PATH = os.environ.get(
     "MACHO_CACHE_PICKLE_PATH",
     os.path.join(tempfile.gettempdir(), "macho_cache.pkl")
 )
+print(PICKLE_PATH)
 
 # --------------- Main Page ---------------
 
@@ -50,7 +51,17 @@ def load_from_pickle() -> Cache:
         raise FileNotFoundError("No cache object found in persistent storage")
     
     with open(PICKLE_PATH, "rb") as f:
-        return pickle.load(f)
+        cache = pickle.load(f)
+
+    if not hasattr(cache, "cache"):
+        raise AttributeError("Cache object missing attribute 'cache' after unpickling")
+    
+    if isinstance(cache, list):
+        for index, shard in enumerate(cache):
+            if not hasattr(shard, "cache"):
+                raise AttributeError(f"Cache shard {index} is missing 'cache' attribute")
+    
+    return cache
 
 
 def run_dashboard(cache: Cache) -> None:

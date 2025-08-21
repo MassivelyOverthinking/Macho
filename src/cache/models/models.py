@@ -199,14 +199,25 @@ class BaseCache():
     
     def __getstate__(self):
         # Removes RLocks to allow for Pickling/Serialization.
-        state = self.__dict__.copy()
-        state.pop("lock", None)
+        state = {}
+        for cls in self.__class__.__mro__:
+            if hasattr(cls, "__slots__"):
+                for slot in cls.__slots__:
+                    if slot == "lock":
+                        continue
+                    state[slot] = getattr(self, slot, None)
         return state
     
-    def __setstate__(self, state):
+    def __setstate__(self, state: dict):
         # Reinstates RLocks after returning from serialization.
-        self.__dict__.update(state)
+        for cls in self.__class__.__mro__:
+            if hasattr(cls, "__slots__"):
+                for slot in cls.__slots__:
+                    if slot == "lock":
+                        continue
+                    setattr(self, slot, state.get(slot, None))
         self.lock = RLock()
+
     
     def __contains__(self, key: Any) -> bool:
         with self.lock:
@@ -234,6 +245,9 @@ class LRUCache(BaseCache):
     default_ttl: float
         Time-to-live for individual data entries stored in the cache, protrayed in seconds.
     """
+
+    __slots__ = ()      # Initialize Slots to inherit variables from BaseCache
+
     def __init__(self, max_cache_size: int, default_ttl: float):
         super().__init__(max_cache_size, default_ttl)
 
@@ -281,6 +295,9 @@ class FIFOCache(BaseCache):
     default_ttl: float
         Time-to-live for individual data entries stored in the cache, protrayed in seconds.
     """
+
+    __slots__ = ()      # Initialize Slots to inherit variables from BaseCache
+
     def __init__(self, max_cache_size: int, default_ttl: float):
         super().__init__(max_cache_size, default_ttl)
 
@@ -327,6 +344,9 @@ class RandomCache(BaseCache):
     default_ttl: float
         Time-to-live for individual data entries stored in the cache, protrayed in seconds.
     """
+
+    __slots__ = ()      # Initialize Slots to inherit variables from BaseCache
+
     def __init__(self, max_cache_size: int, default_ttl: float):
         super().__init__(max_cache_size, default_ttl)
 
