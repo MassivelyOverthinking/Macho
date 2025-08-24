@@ -21,13 +21,13 @@ JSON_DATA_PATH = os.environ.get(
     "MACHO_CACHE_JSON_PATH",
     os.path.join(tempfile.gettempdir(), "macho_cache.json")
 )
-print(JSON_DATA_PATH)
 
 # --------------- Main Page ---------------
 
 st.set_page_config(
     page_title="Macho Caching Metrics",
-    page_icon="👋"
+    page_icon="👋",
+    layout="wide"
 )
 
 st.title("Welcome to Macho Metrics Dashboard! 👋")

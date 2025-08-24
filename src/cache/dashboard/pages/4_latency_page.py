@@ -82,7 +82,7 @@ else:
                 hist_latency_data = pd.DataFrame(all_shared_latencies)
                 st.dataframe(hist_latency_data)
 
-                shared_bins = st.slider(min_value=10, max_value=100, value=30)
+                shared_bins = st.slider(label="Number of bins", min_value=10, max_value=100, value=30)
 
                 st.plotly_chart(px.histogram(
                     hist_latency_data,
@@ -137,7 +137,7 @@ else:
                 st.subheader("Histograms for Cache Latencies")
                 all_entry_latency_data = pd.DataFrame(all_single_latencies, columns=["Latency"])
 
-                single_bins = st.slider(min_value=10, max_value=100, value=30)
+                single_bins = st.slider(label="Number of bins", min_value=10, max_value=100, value=30)
 
                 if all_single_latencies:
                     st.plotly_chart(px.histogram(
