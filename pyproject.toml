@@ -75,7 +75,7 @@ package-dir = {"" = "src"}
 where = ["src"]
 
 [project.urls]
-Homepage = "https://github.com/MassivelyOverthinking/Stash"
-Documentation = "https://github.com/MassivelyOverthinking/Stash"
-Source = "https://github.com/MassivelyOverthinking/Stash"
-Issues = "https://github.com/MassivelyOverthinking/Stash"
+Homepage = "https://github.com/MassivelyOverthinking/Macho"
+Documentation = "https://github.com/MassivelyOverthinking/Macho"
+Source = "https://github.com/MassivelyOverthinking/Macho"
+Issues = "https://github.com/MassivelyOverthinking/Macho"
