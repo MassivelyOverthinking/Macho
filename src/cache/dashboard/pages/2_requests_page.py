@@ -25,7 +25,7 @@ except Exception as e:
 
 if macho_cache_metrics is None:
     st.error("No metrics found in current session state")
-elif not isinstance(macho_cache_metrics, dict):
+elif not isinstance(macho_cache_metrics, (dict, list)):
     st.error("The obejct currently in Session State is not a valid Cache-object")
 else:
     if isinstance(macho_cache_metrics, list):

@@ -1,7 +1,7 @@
 # --------------- Imports ---------------
 
 from src.cache.main import Cache
-from src.cache.dashboard import load_from_pickle
+from src.cache.dashboard import load_from_json
 
 from src.cache.errors import MetricsLifespanException
 
@@ -17,10 +17,10 @@ st.subheader("Metrics & Data visualisation regarding individual and overall life
 
 # Access stored cache in Session State
 try:
-    if "macho_cache" not in st.session_state:
-        st.session_state.macho_cache = load_from_pickle()
+    if "macho_metrics" not in st.session_state:
+        st.session_state["macho_metrics"] = load_from_json()
 
-    cache = st.session_state.macho_cache
+    macho_cache_metrics = st.session_state["macho_metrics"]
 except Exception as e:
     st.error(f"Failed ot load cache {e}")
     st.stop()
@@ -28,18 +28,18 @@ except Exception as e:
 # Manage Streamlit tabs
 tabs = st.tabs(["📊 Summary", "📉 Histogram", "📦 Box Plot"])
 
-if cache is None:
+if macho_cache_metrics is None:
     st.error("No metrics found in current session state")
-elif not isinstance(cache, Cache):
+elif not isinstance(macho_cache_metrics, (dict, list)):
     st.error("The object currently in Session State is not a valid Cache-object")
 else:
-    if isinstance(cache.cache, list): # Shared Cache
+    if isinstance(macho_cache_metrics, list): # Shared Cache
 
         try:
-            lifespan_data = [ch.metric_lifespan for ch in cache.cache]
+            lifespan_data = [shard["lifespan_metrics"] for shard in macho_cache_metrics]
             all_lifespan = [
                 {"Shard": i, "Lifespan": val}
-                for i, entry in enumerate(cache.cache)
+                for i, entry in enumerate(macho_cache_metrics)
                 for val in entry.lifespan
             ]
         except MetricsLifespanException as e:
@@ -105,8 +105,8 @@ else:
         st.subheader("Single Cache Lifespan Metrics")
 
         try:
-            lifespan_data = cache.cache.metric_lifespan
-            entry_lifespans = cache.cache.lifespan
+            lifespan_data = macho_cache_metrics["lifespan_metrics"]
+            entry_lifespans = macho_cache_metrics["lifespan"]
         except MetricsLifespanException as e:
             st.error(f"No lifespan data currently available {e}")
         else:
