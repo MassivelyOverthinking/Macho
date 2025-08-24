@@ -1,7 +1,7 @@
 # --------------- Imports ---------------
 
 from src.cache.main import Cache
-from src.cache.dashboard import load_from_pickle
+from src.cache.dashboard import load_from_json
 
 import streamlit as st
 import pandas as pd
@@ -15,31 +15,31 @@ st.subheader("Metrics & Data visualisation regarding total requests made towards
 
 # Access stored cache in Session State
 try:
-    if "macho_cache" not in st.session_state:
-        st.session_state.macho_cache = load_from_pickle()
+    if "macho_matrics" not in st.session_state:
+        st.session_state["macho_metrics"] = load_from_json()
 
-    cache = st.session_state.macho_cache
+    macho_cache_metrics = st.session_state["macho_metrics"]
 except Exception as e:
     st.error(f"Failed ot load cache {e}")
     st.stop()
 
-if cache is None:
+if macho_cache_metrics is None:
     st.error("No metrics found in current session state")
-elif not isinstance(cache, Cache):
+elif not isinstance(macho_cache_metrics, dict):
     st.error("The obejct currently in Session State is not a valid Cache-object")
 else:
-    if isinstance(cache.cache, list):
+    if isinstance(macho_cache_metrics, list):
         st.subheader("Shared Cache Metrics")
 
         shard_df = pd.DataFrame([
             {
                 "Shard": index,
-                "Hit Ratio": shard.hit_ratio,
-                "Hits": shard.hits,
-                "Misses": shard.misses,
-                "Evictions": shard.evictions
+                "Hit Ratio": shard["hit_ratio"],
+                "Hits": shard["hits"],
+                "Misses": shard["misses"],
+                "Evictions": shard["evictions"]
             }
-            for index, shard in enumerate(cache.cache)
+            for index, shard in enumerate(macho_cache_metrics)
         ])
 
         st.plotly_chart(px.bar(
@@ -47,7 +47,7 @@ else:
             x="Shard",
             y=["Hits", "Misses", "Evictions"],
             barmode="group",
-            title="Cache activity pr. Cahcing System"
+            title="Cache activity pr. Caching System"
         ))
 
         st.plotly_chart(px.line(
@@ -60,7 +60,7 @@ else:
     else:
         st.subheader("Single Cache Metrics")
 
-        single_data = cache.cache.metrics
+        single_data = macho_cache_metrics
 
         single_df = pd.DataFrame([{
             "Hits": single_data["hits"],

@@ -1,7 +1,6 @@
 # --------------- Imports ---------------
 
-from src.cache.main import Cache
-from src.cache.dashboard import load_from_pickle
+from src.cache.dashboard import load_from_json
 
 import streamlit as st
 
@@ -10,29 +9,29 @@ import streamlit as st
 st.title("General Cache Information ℹ️")
 st.divider()
 
-# Access stored cache in Session State
+# Access stored cache data in Session State
 try:
-    if "macho_cache" not in st.session_state:
-        st.session_state.macho_cache = load_from_pickle()
+    if "macho_metrics" not in st.session_state:
+        st.session_state["macho_metrics"] = load_from_json()    # Loads data from persistent storage.
 
-    cache = st.session_state.macho_cache
+    macho_cache_metrics = st.session_state["macho_metrics"]
 except Exception as e:
-    st.error(f"Failed ot load cache {e}")
+    st.error(f"Failed ot load cache data {e}")
     st.stop()
 
 
-if cache is None:
+if macho_cache_metrics is None:
     st.error("No caching metrics found in session state")
-elif not isinstance(cache, Cache):
+elif not isinstance(macho_cache_metrics, dict):
     st.error("The object currently in Session State is not a valid Cache-class object")
 else:
     st.subheader("Configuration")
     st.json({
-        "Max Cache Size": cache.max_cache_size,
-        "Current Cache Size": cache.current_size,
-        "Time-to-live": cache.ttl,
-        "Eviction Strategy": cache.strategy,
-        "Shard Count": cache.shard_count,
-        "Bloom Filter Enabled": cache.bloom,
-        "False Positive Rate": cache.probability if cache.bloom else "N/A"
+        "Max Cache Size": macho_cache_metrics["max_cache_size"],
+        "Current Cache Size": macho_cache_metrics["current_size"],
+        "Time-to-live": macho_cache_metrics["ttl"],
+        "Eviction Strategy": macho_cache_metrics["eviction_strategy"],
+        "Shard Count": macho_cache_metrics["shard_count"],
+        "Bloom Filter Enabled": macho_cache_metrics["bloom"],
+        "False Positive Rate": macho_cache_metrics["probability"] if macho_cache_metrics["bloom"] else "N/A"
     })

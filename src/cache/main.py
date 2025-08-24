@@ -226,6 +226,17 @@ class Cache():
         else:
             return self.cache.metrics
         
+    def get_metrics(self):
+        return {
+            "max_cache_size": self.max_cache_size,
+            "current_size": self.current_size,
+            "ttl": self.ttl,
+            "shard_count": self.shard_count,
+            "bloom": self.bloom,
+            "probability": self.probability
+        }
+
+        
     def __getstate__(self):
         return {slot: getattr(self, slot, None) for slot in self.__slots__}
     
