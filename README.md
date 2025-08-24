@@ -8,37 +8,44 @@
 
 ## What is Macho
 
-Macho functions as a completely self-contained in-memory caching system with extensive configurable functionality.
+Macho is a lightweigh, high-performance in-memory caching system designed with customizability at its core. Unlike heavyweight distributed caching systems (Redis & Memocached), Macho is entirely self-contained, running directly in your local Python environment without any external dependencies.
+Macho enables Python developers to define and fine-tune how their cache behaves, offering powerful and flexible control over evictions, storage and general data life-cycle - all within a compact and memory-efficient infrastructure.
 
-Amongst other configurable features, Macho offers user-defined eviction strategies: 'LRU', 'FIFO', 'Random' that handles cache entry evictions.
+## Core Philosophy
 
-Stash is a '__slots__'-based Python class-decorator developed to assist Python developers in 
-significantly reducing memory overhead when initiating individual classes. It dynamically creates a new optimised class with necessary dunder-methods behind the scene (__init__, __repr__, __eq__), and also adds user-specified methods to ensure custom functionality. The application also supports immutability through 'Freeze' parameter, disabling user's ability to set attribute values post-initialisation for better memory efficiency.
+Configuration first, Complexity never!
+Macho was intentionally constructed for Python developers that desire full control over their caching operations without the overhead of an external server or complex delpoyment.
 
 ## ❓ Why use Macho Caching?
 
-Unlike current major caching frameworks/libs (Redis) Macho is contained entirely in-memory and therefore requires no external use of internet connectivity for functionality. Additionally, Macho focuses exclusively on developer configuration, allowing users to customize caching operations to suit individual needs and specific situations. These features are:
+Macho currently aims to fill the gaps between built-in Python caching solutions and full-scale caching servers by offering:
+* ✅ **In-memory speed** without any external server requirements.
+* 🔧 **Full user configuration** over cache behavior and functionality.
+* 🧩 **Modular design** for extensibility and experimentation
+* 🐍 **Pure Python implementation**, great prototyping or ligthweight production services.
 
-* ⚡ **Bloom Filter**: A probabilistic data structure to significantly reduce cache membership checks.
-* 🚀 **Sharding**: Splits the current cache into multiple 'shards' to help balance large entry loads.
-* 🔐 **Eviction Strategies**: User-defined strategies for entry evictions: 'LRU', 'FIFO', 'Random'.
-* 🧼 **Time-to-live**: Specify the exact time-interval individual entries exist in memory.s
+## ⚙️ Key Features
 
-**Stash is designed to help you write lean, efficient and Pythonic code**
+* ⚡ **Bloom Filter Suppoert**: Probabilistically reduce costly cache lookups and improve performance.
+* 🔀 **Sharding**: Partition your cache into independent shards for better concurreny.
+* 🔃 **Custom Eviction Strategies**: Currently supports **LRU**, **FIFO** and **Random** (More coming soon).
+* ⏳ **Time-to-live (TTL)**: Configure per-cache expiration with automatic clean-up.
+* 📊 **Metrics & Data**: Collect cache usage metrics and data for optimization and analysis.
 
-## 📋 Key Features
-* 🎁 Simple-to-use Python class decorator for memory optimisation.
-* 🛠️ Dynamically creates __slots__-based classes to minimize memory overhead.
-* ⚗️ Adds essential dunder methods (__init__, __repr__, __eq__).
-* 🔄 Allows user to specify class-methods to preserve and inherit.
-* ❄️ Supports attribute Freeze-functionality (_frozen) for increased memory efficiency.
-* 📊 Retains original class metadata for analysis, debugging and introspection.
+**Macho is designed to provide Python developers with a lightweight in-memory alternative to major caching systems without compromising on individual customisation**
 
 ---
 
-## ❓ The Future of Macho
-* Addtional support for probabilistic data structures (XOR-filter, Cuckoo-filter).
-* New eviction strategies (LFU, MFU)
-* CLI support
-* Expansion on current caching metrics for better optimization and analysis.
-* Improved Streamlit UI for better visualisation. 
+## 🔮 The Future of Macho
+Here is a current roadmap for future versions:
+* 🔁 Addtional probabilistic data structures (e.g., **XOR-filter**, **Cuckoo-filter**).
+* 📈 New eviction policies (**LFU**, **MFU**)
+* 🧰 CLI tooling for cache inspection and management.
+* 📊 Advanced metrics and performance analysis.
+* 🖥️ Improved Streamlit-based UI dashboard for data visualisation. 
+
+## 🤝 Contribution
+Macho is open to contributions from the Python community! If you'd like to report a bug, request features, or possibly contribute code, please feel free to open and issue or pull request!
+
+## 📄 Licensing
+The project is licensed under the MIT License.
