@@ -5,7 +5,6 @@ from typing import Any, Dict, Optional
 from collections import OrderedDict, deque
 from statistics import median
 
-from ..errors import MetricsLifespanException, MetricsLatencyException
 from ..logging import get_logger
 
 import time
@@ -106,7 +105,7 @@ class BaseCache():
             self.add_latency.clear()
             self.get_latency.clear()
 
-    def _etract_latency_data(self, data: deque, label: str) -> Dict[str, Any]:
+    def _extract_latency_data(self, data: deque, label: str) -> Dict[str, Any]:
         return {
             f"{label}_latency_seconds": sum(data) / len(data),
             f"max_{label}_latency": max(data),
@@ -138,7 +137,15 @@ class BaseCache():
     @property
     def metric_lifespan(self) -> Dict[str, float]:
         if not self.lifespan:
-            raise MetricsLifespanException()
+            return {
+                "max": 0.0,
+                "min": 0.0,
+                "count": 0,
+                "total": 0,
+                "average": 0,
+                "median": 0.0,
+                "all_lifespans": []
+            }
         
         lifespan_values = list(self.lifespan)
         total = sum(lifespan_values)
@@ -163,14 +170,25 @@ class BaseCache():
     
     @property
     def latencies(self) -> Dict[str, float]:
-        if not self.add_latency and not self.get_latency:
-            raise MetricsLatencyException("No latency data found")
-        
         latencies = {}
         if self.add_latency:
-            latencies.update(self._etract_latency_data(self.add_latency, "add"))
+            latencies.update(self._extract_latency_data(self.add_latency, "add"))
+        else:
+            latencies.update({
+                "add_latency_seconds": 0.0,
+                "max_add_latency": 0.0,
+                "min_add_latency": 0.0,
+                "add_latency": []
+            })
         if self.get_latency:
-            latencies.update(self._etract_latency_data(self.get_latency, "get"))
+            latencies.update(self._extract_latency_data(self.get_latency, "get"))
+        else:
+            latencies.update({
+                "get_latency_seconds": 0.0,
+                "max_get_latency": 0.0,
+                "min_get_latency": 0.0,
+                "get_latency": []
+            })
         return latencies
         
     @property
@@ -185,17 +203,9 @@ class BaseCache():
             "hit_ratio": self.hit_ratio,
             "evictions": self.evictions,
             "memory_size": self.memory_size,
+            "lifespan_metrics": self.metric_lifespan,
+            "latencies": self.latencies
         }
-
-        try:
-            metrics["lifespan_metrics"] = self.metric_lifespan
-        except MetricsLifespanException:
-            metrics["lifespan_metrics"] = {}
-
-        try:
-            metrics["latencies"] = self.latencies
-        except MetricsLatencyException:
-            metrics["latencies"] = {}
 
         return metrics
     

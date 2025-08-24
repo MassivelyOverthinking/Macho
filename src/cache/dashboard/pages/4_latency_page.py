@@ -66,8 +66,8 @@ else:
                 st.dataframe(shard_latency_df)
                 st.plotly_chart(px.line(
                     shard_latency_df.melt(id_vars="Shard", var_name="Metric", value_name="Latency(s)"),
-                    x="Shard",
-                    y="Value",
+                    x="Metric",
+                    y="Latency(s)",
                     color="Metric",
                     markers=True,
                     title="Latency Metrics per Shard",
