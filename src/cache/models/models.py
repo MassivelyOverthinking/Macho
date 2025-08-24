@@ -141,7 +141,8 @@ class BaseCache():
             "count": count,
             "total": total,
             "average": total / count,
-            "median": median(self.lifespan)
+            "median": median(self.lifespan),
+            "all_lifespans": self.lifespan
         }
     
     @property

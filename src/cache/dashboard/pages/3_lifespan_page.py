@@ -37,10 +37,10 @@ else:
 
         try:
             lifespan_data = [shard["lifespan_metrics"] for shard in macho_cache_metrics]
-            all_lifespan = [
+            all_lifespans = [
                 {"Shard": i, "Lifespan": val}
-                for i, entry in enumerate(macho_cache_metrics)
-                for val in entry.lifespan
+                for i, shard in enumerate(lifespan_data)
+                for val in shard["all_lifespans"]
             ]
         except MetricsLifespanException as e:
             st.error(f"No lifespan data currently available {e}")
@@ -75,7 +75,7 @@ else:
 
             with tabs[1]:
                 st.subheader("Distribution of Lifespan Metrics")
-                lfsp_data = pd.DataFrame(all_lifespan)
+                lfsp_data = pd.DataFrame(all_lifespans)
                 st.dataframe(lfsp_data)
                 bins = st.slider("Number of bins", min_value=10, max_value=100, value=30)
                 st.plotly_chart(px.histogram(
@@ -106,7 +106,7 @@ else:
 
         try:
             lifespan_data = macho_cache_metrics["lifespan_metrics"]
-            entry_lifespans = macho_cache_metrics["lifespan"]
+            entry_lifespans = lifespan_data["all_lifespans"]
         except MetricsLifespanException as e:
             st.error(f"No lifespan data currently available {e}")
         else:

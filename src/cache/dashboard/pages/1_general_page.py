@@ -16,13 +16,13 @@ try:
 
     macho_cache_metrics = st.session_state["macho_metrics"]
 except Exception as e:
-    st.error(f"Failed ot load cache data {e}")
+    st.error(f"Failed to load cache data {e}")
     st.stop()
 
 
 if macho_cache_metrics is None:
     st.error("No caching metrics found in session state")
-elif not isinstance(macho_cache_metrics, dict):
+elif not isinstance(macho_cache_metrics, (dict, list)):
     st.error("The object currently in Session State is not a valid Cache-class object")
 else:
     st.subheader("Configuration")

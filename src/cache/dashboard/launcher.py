@@ -3,7 +3,7 @@
 from ..logging.logger_config import get_logger
 from ..main import Cache
 
-from typing import Dict, Any
+from typing import Dict, Any, Union, List
 
 import streamlit.web.cli as stcli
 
@@ -23,18 +23,17 @@ JSON_DATA_PATH = os.environ.get(
     "MACHO_CACHE_JSON_PATH",
     os.path.join(tempfile.gettempdir(), "macho_cache.json")
 )
-print(JSON_DATA_PATH)
 
 # --------------- Streamlit Dashboard Launcher ---------------
 
-def load_from_json() -> Dict[str, Any]:       # Loads data for Streamlit dashboard from persistent storage
+def load_from_json() -> Union[Dict[str, Any], List[Dict[str, Any]]]:       # Loads data for Streamlit dashboard from persistent storage
     if not os.path.exists(JSON_DATA_PATH):
         raise FileNotFoundError(f"No data found in persistent storage")
     
     with open(JSON_DATA_PATH, "rb") as tmp: 
         metrics_data = json.load(tmp)   # Retreives data
 
-    return metrics_data     # Returns data in a dictionary formats
+    return metrics_data     # Returns data in a dictionary/list formats
 
 
 
@@ -42,7 +41,7 @@ def launch_dashboard(cache: Cache) -> None:
     if not isinstance(cache, Cache):
         raise TypeError(f"Paramter 'cache' must be of Type: Cache, not {type(cache)}")
     
-    macho_cache_metrics = cache.get_metrics()
+    macho_cache_metrics = cache.metrics
     
     with open(JSON_DATA_PATH, "wb") as f:   # Immediately allocates data to persistent storage.
         json.dump(macho_cache_metrics, f)

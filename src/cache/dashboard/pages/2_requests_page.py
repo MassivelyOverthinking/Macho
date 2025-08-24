@@ -60,13 +60,11 @@ else:
     else:
         st.subheader("Single Cache Metrics")
 
-        single_data = macho_cache_metrics
-
         single_df = pd.DataFrame([{
-            "Hits": single_data["hits"],
-            "Misses": single_data["misses"],
-            "Evictions": single_data["evictions"],
-            "Hit Ratio": single_data["hit_ratio"]
+            "Hits": macho_cache_metrics["hits"],
+            "Misses": macho_cache_metrics["misses"],
+            "Evictions": macho_cache_metrics["evictions"],
+            "Hit Ratio": macho_cache_metrics["hit_ratio"]
         }])
 
         st.plotly_chart(px.bar(

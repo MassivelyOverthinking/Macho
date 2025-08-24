@@ -1,7 +1,6 @@
 # --------------- Imports ---------------
 
-from src.cache.main import Cache
-from src.cache.dashboard import load_from_pickle
+from src.cache.dashboard import load_from_json
 
 from src.cache.errors import MetricsLatencyException
 
@@ -17,10 +16,10 @@ st.subheader("Metrics & Data visualisation of the time it takes to perform indiv
 
 # Access stored cache in Session State
 try:
-    if "macho_cache" not in st.session_state:
-        st.session_state.macho_cache = load_from_pickle()
+    if "macho_metrics" not in st.session_state:
+        st.session_state["macho_metrics"] = load_from_json()
 
-    cache = st.session_state.macho_cache
+    macho_cache_metrics = st.session_state["macho_metrics"]
 except Exception as e:
     st.error(f"Failed ot load cache {e}")
     st.stop()
@@ -28,23 +27,23 @@ except Exception as e:
 # Manage Streamlit Tabs
 tabs = st.tabs(["📉 Line Charts", "📊 Histograms", "📦 Box Plots"])
 
-if cache is None:
+if macho_cache_metrics is None:
     st.error("No metrics found in current session state")
-elif not isinstance(cache, Cache):
+elif not isinstance(macho_cache_metrics, (dict, list)):
     st.error("The object currently in Session State is not a valid Cache-object")
 else:
-    if isinstance(cache.cache, list): # shared cache
+    if isinstance(macho_cache_metrics, list): # shared cache
 
         try:
-            shared_latency_data = [ch.latencies for ch in cache.cache]
+            shared_latency_data = [shard["latencies"] for shard in macho_cache_metrics]
             all_shared_latencies = [
                 {"Shard": index, "Type": "Get", "Latency": get_l}
-                for index, entry in enumerate(cache.cache)
-                for get_l in entry.get_latency
+                for index, shard in enumerate(shared_latency_data)
+                for get_l in shard["get_latency"]
             ] + [
                 {"Shard": index, "Type": "Add", "Latency": add_l}
-                for index, entry in enumerate(cache.cache)
-                for add_l in entry.add_latency
+                for index, shard in enumerate(shared_latency_data)
+                for add_l in shard["add_latency"]
             ]
         except MetricsLatencyException as e:
             st.error("No Latency Data currently available")
@@ -111,8 +110,8 @@ else:
         st.subheader("Single Cache Latency Metrics")
 
         try:
-            single_latency_data = cache.cache.latencies
-            all_single_latencies = cache.cache.get_latency + cache.cache.add_latency
+            single_latency_data = macho_cache_metrics["latencies"]
+            all_single_latencies = macho_cache_metrics["get_latency"] + macho_cache_metrics["add_latency"]
         except MetricsLatencyException as e:
             st.error(f"No latency data currently available {e}")
         else:
