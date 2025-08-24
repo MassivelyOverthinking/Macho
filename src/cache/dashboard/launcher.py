@@ -35,7 +35,12 @@ def load_from_json() -> Union[Dict[str, Any], List[Dict[str, Any]]]:       # Loa
 
     return metrics_data     # Returns data in a dictionary/list formats
 
-
+def save_to_memory(data: Union[Dict, List[Dict]]) -> None:
+    if not isinstance(data, (dict, list)):
+        raise TypeError(f"Could not save to memory, as 'data' must be of Type: dict or list")
+    
+    with open(JSON_DATA_PATH, "w", encoding='utf-8') as file:
+        json.dump(data, file, ensure_ascii=False, indent=2)
 
 def launch_dashboard(cache: Cache) -> None:
     if not isinstance(cache, Cache):
@@ -43,8 +48,7 @@ def launch_dashboard(cache: Cache) -> None:
     
     macho_cache_metrics = cache.metrics
     
-    with open(JSON_DATA_PATH, "wb") as f:   # Immediately allocates data to persistent storage.
-        json.dump(macho_cache_metrics, f)
+    save_to_memory(macho_cache_metrics)
 
     # Runs the Streamlit server from a subprocess
     script_path = os.path.abspath(__file__)
