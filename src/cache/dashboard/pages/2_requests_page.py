@@ -15,7 +15,7 @@ st.subheader("Metrics & Data visualisation regarding total requests made towards
 
 # Access stored cache in Session State
 try:
-    if "macho_matrics" not in st.session_state:
+    if "macho_metrics" not in st.session_state:
         st.session_state["macho_metrics"] = load_from_json()
 
     macho_cache_metrics = st.session_state["macho_metrics"]

@@ -53,7 +53,7 @@ else:
                     "Shard": index,
                     "Avg. Add Latency": data["add_latency_seconds"],
                     "Max Add Latency": data["max_add_latency"],
-                    "Min Add Latency": data["min_latency_data"],
+                    "Min Add Latency": data["min_add_latency"],
                     "Avg. Get Latency": data["get_latency_seconds"],
                     "Max Get Latency": data["max_get_latency"],
                     "Min Get Latency": data["min_get_latency"]

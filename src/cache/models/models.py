@@ -106,6 +106,14 @@ class BaseCache():
             self.add_latency.clear()
             self.get_latency.clear()
 
+    def _etract_latency_data(self, data: deque, label: str) -> Dict[str, Any]:
+        return {
+            f"{label}_latency_seconds": sum(data) / len(data),
+            f"max_{label}_latency": max(data),
+            f"min_{label}_latency": min(data),
+            f"{label}_latency": list(data)
+        }
+
     @property
     def current_size(self) -> int:
         return len(self.cache)
@@ -132,17 +140,18 @@ class BaseCache():
         if not self.lifespan:
             raise MetricsLifespanException()
         
-        total = sum(self.lifespan)
-        count = len(self.lifespan)
+        lifespan_values = list(self.lifespan)
+        total = sum(lifespan_values)
+        count = len(lifespan_values)
         
         return {
-            "max": max(self.lifespan),
-            "min": min(self.lifespan),
+            "max": max(lifespan_values),
+            "min": min(lifespan_values),
             "count": count,
             "total": total,
             "average": total / count,
-            "median": median(self.lifespan),
-            "all_lifespans": self.lifespan
+            "median": median(lifespan_values),
+            "all_lifespans": lifespan_values
         }
     
     @property
@@ -154,24 +163,16 @@ class BaseCache():
     
     @property
     def latencies(self) -> Dict[str, float]:
-        latencies = {}
-
-        if self.add_latency:
-            latencies["add_latency_seconds"] = sum(self.add_latency) / len(self.add_latency)
-            latencies["max_add_latency"] = max(self.add_latency)
-            latencies["min_add_latency"] = min(self.add_latency)
-        else:
-            raise MetricsLatencyException("No data related to 'add' latency currently available")
+        if not self.add_latency and not self.get_latency:
+            raise MetricsLatencyException("No latency data found")
         
+        latencies = {}
+        if self.add_latency:
+            latencies.update(self._etract_latency_data(self.add_latency, "add"))
         if self.get_latency:
-            latencies["get_latency_seconds"] = sum(self.get_latency) / len(self.get_latency)
-            latencies["max_get_latency"] = max(self.get_latency)
-            latencies["min_get_latency"] = min(self.get_latency)
-        else:
-            raise MetricsLatencyException("No data related to 'get' latency currently available")
-
+            latencies.update(self._etract_latency_data(self.get_latency, "get"))
         return latencies
-
+        
     @property
     def metrics(self) -> Dict[str, Any]:
         metrics = {

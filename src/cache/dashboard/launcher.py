@@ -30,7 +30,7 @@ def load_from_json() -> Union[Dict[str, Any], List[Dict[str, Any]]]:       # Loa
     if not os.path.exists(JSON_DATA_PATH):
         raise FileNotFoundError(f"No data found in persistent storage")
     
-    with open(JSON_DATA_PATH, "rb") as tmp: 
+    with open(JSON_DATA_PATH, "r", encoding='utf-8') as tmp: 
         metrics_data = json.load(tmp)   # Retreives data
 
     return metrics_data     # Returns data in a dictionary/list formats
