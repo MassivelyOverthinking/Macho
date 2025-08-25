@@ -209,31 +209,6 @@ class BaseCache():
 
         return metrics
     
-    def __getstate__(self):
-        # Removes RLocks to allow for Pickling/Serialization.
-        state = {}
-        for cls in self.__class__.__mro__:
-            if hasattr(cls, "__slots__"):
-                for slot in cls.__slots__:
-                    if slot == "lock":
-                        continue
-                    state[slot] = getattr(self, slot, None)
-        return state
-    
-    def __setstate__(self, state: dict):
-        # Reinstates RLocks after returning from serialization.
-        for cls in self.__class__.__mro__:
-            if hasattr(cls, "__slots__"):
-                for slot in cls.__slots__:
-                    if slot == "lock":
-                        continue
-                    if slot in ("lifespan", "get_latency", "add_latency"):
-                        setattr(self, slot, deque(state.get(slot, []), maxlen=1000))
-                    else:
-                        setattr(self, slot, state.get(slot, None))
-        self.lock = RLock()
-
-    
     def __contains__(self, key: Any) -> bool:
         with self.lock:
             entry = self.cache.get(key)

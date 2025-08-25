@@ -15,7 +15,7 @@ logger = get_logger(__name__)
 
 class Cache():
     """
-    A shared in-memory optional Bloom filer support and configurable Eviction Strategies.
+    A shared in-memory optional Bloom filter support and configurable Eviction Strategies.
 
     The Cache-class supports time-based expiration, sharding, probabilistic item/value existence
     checks by use of Bloom Filter. Ideal for high-performance caching scenarios wherein memory
@@ -31,7 +31,7 @@ class Cache():
     strategy: str
         The strategy used to evict/delete expired cache entries (Defaults to 'lru').
     bloom: bool
-        Actives the addition of a Bloom Filter for probabilistic membership checking (Defaults to False).
+        Activates the addition of a Bloom Filter for probabilistic membership checking (Defaults to False).
     probability: float
         The probability that the Bloom Filter produces a false positive
         (Bloom Filter must be active to function, and value must be between 0.0 - 1.0). 
@@ -93,10 +93,10 @@ class Cache():
 
     def add(self, key: Any, entry: Any) -> None:
         """
-        Adds new key-value pair to teh current cache.
+        Adds new key-value pair to the current cache.
 
         If sharding is enabled, the key is allocated to the correct shard based on it's hashed value.
-        If Bloom filter is enabled, the key is stored in the filter's bitarry for future existence checks.
+        If Bloom filter is enabled, the key is stored in the filter's bit arry for future existence checks.
 
         ----- Parameters -----
         key: Any
@@ -120,8 +120,8 @@ class Cache():
         Retrieves the value associated with the given key from the caching system.
 
         If sharding is enabled, the item/value gets retrieved from the appropriate shard.
-        If Bloom Filter is enabled, the caching system initially checksfor its existnece in the BloomFilter
-        bitarry, before making unecceasry calls.
+        If Bloom Filter is enabled, the caching system initially checksfor its existence in the BloomFilter
+        bitarry, before making unnecceasry calls.
 
         ----- Parameters -----
         key: Any
@@ -143,7 +143,7 @@ class Cache():
             return self.cache[num].get(key)
         else:
             if self.bloom_filter and not self.bloom_filter.check(key):
-                logger.debug(f"Bloom filter indicates that {key} is not presetn in cache")
+                logger.debug(f"Bloom filter indicates that {key} is not present in cache")
                 return None
             logger.debug(f"Cache entry {key} successfully retreived")
             return self.cache.get(key)
@@ -164,7 +164,7 @@ class Cache():
                 shard.clear()
         else:
             self.cache.clear()
-        logger.info("Cache succesfully cleared!")
+        logger.info("Cache successfully cleared!")
 
     def _get_shard_size(self) -> List[int]:
         base = self.max_cache_size // self.shard_count
@@ -235,14 +235,18 @@ class Cache():
             "bloom": self.bloom,
             "probability": self.probability
         }
-
-        
-    def __getstate__(self):
-        return {slot: getattr(self, slot, None) for slot in self.__slots__}
     
-    def __setstate__(self, state: dict):
-        for slot in self.__slots__:
-            setattr(self, slot, state.get(slot, None))
+    def __len__(self):
+        return self.current_size
+    
+    def __contains__(self, key: Any) -> bool:
+        return self.get(key) is not None
+    
+    def __getitem__(self, key: Any) -> Any:
+        value = self.get(key)
+        if value is None:
+            raise KeyError(f"{key} not found!")
+        return value
 
     def __repr__(self):
         return (f"<Cache(size={self.max_cache_size}, ttl={self.ttl}, eviction strategy={self.strategy})>")
