@@ -1,7 +1,7 @@
 # --------------- Imports ---------------
 
-from ..logging.logger_config import get_logger
-from ..main import Cache
+from macho.logging.logger_config import get_logger
+from macho.main import Cache
 
 from typing import Dict, Any, Union, List
 

@@ -1,6 +1,6 @@
 # --------------- Imports ---------------
 
-from .bloom import BloomFilter
+from bloom import BloomFilter
 
 # --------------- Package Manager ---------------
 

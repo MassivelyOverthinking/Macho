@@ -1,8 +1,8 @@
 # --------------- Imports ---------------
 
-from src.cache.dashboard import load_from_json
+from macho.dashboard import load_from_json
 
-from src.cache.errors import MetricsLatencyException
+from macho.errors import MetricsLatencyException
 
 import streamlit as st
 import pandas as pd
