@@ -1,6 +1,6 @@
 # --------------- Imports ---------------
 
-from ..logging import get_logger
+from macho.logging import get_logger
 
 import streamlit as st
 

@@ -1,8 +1,8 @@
 # --------------- Imports ---------------
 
-from ..dashboard import load_from_json
+from macho.dashboard import load_from_json
 
-from ...errors import MetricsLifespanException
+from macho.errors import MetricsLifespanException
 
 import streamlit as st
 import pandas as pd

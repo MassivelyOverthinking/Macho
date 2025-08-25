@@ -1,6 +1,6 @@
 # --------------- Imports ---------------
 
-from ..dashboard import load_from_json
+from macho.dashboard import load_from_json
 
 import streamlit as st
 import pandas as pd

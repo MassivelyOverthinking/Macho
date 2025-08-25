@@ -2,9 +2,9 @@
 
 from typing import List, Optional, Union, Any
 
-from ..models import BaseCache, LRUCache, FIFOCache, RandomCache
-from ..errors import ShardException
-from ..logging import get_logger
+from macho.models import BaseCache, LRUCache, FIFOCache, RandomCache
+from macho.errors import ShardException
+from macho.logging import get_logger
 
 import mmh3
 

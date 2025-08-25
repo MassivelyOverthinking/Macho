@@ -3,7 +3,7 @@
 import math
 import mmh3
 
-from ..logging import get_logger
+from macho.logging import get_logger
 
 from bitarray import bitarray
 from typing import Any

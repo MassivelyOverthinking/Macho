@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional
 from collections import OrderedDict, deque
 from statistics import median
 
-from ..logging import get_logger
+from macho.logging import get_logger
 
 import time
 import random
