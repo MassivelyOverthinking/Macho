@@ -1,6 +1,6 @@
 # --------------- Imports ---------------
 
-from launcher import JSON_DATA_PATH, load_from_json, launch_dashboard, save_to_memory
+from .launcher import JSON_DATA_PATH, load_from_json, launch_dashboard, save_to_memory
 
 # --------------- Package Manager ---------------
 

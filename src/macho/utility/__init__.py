@@ -1,6 +1,6 @@
 # --------------- Imports ---------------
 
-from utils import create_cache, hash_value
+from .utils import create_cache, hash_value
 
 # --------------- Package Manager ---------------
 

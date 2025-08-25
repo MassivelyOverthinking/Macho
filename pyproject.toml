@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "macho"
 version = "0.0.1"
-description = "An in-memory caching system with configurable eviction strategies"
+description = "Macho is a fast, memory-efficient in-memory cache with support for sharding, TTL, and pluggable eviction strategies like LRU, FIFO and Random."
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
 authors = [

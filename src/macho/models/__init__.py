@@ -1,6 +1,6 @@
 # --------------- Imports ---------------
 
-from models import LRUCache, FIFOCache, RandomCache, BaseCache, CacheEntry
+from .models import LRUCache, FIFOCache, RandomCache, BaseCache, CacheEntry
 
 # --------------- Package Manager ---------------
 

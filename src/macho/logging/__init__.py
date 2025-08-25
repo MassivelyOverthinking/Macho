@@ -1,6 +1,6 @@
 # --------------- Imports ---------------
 
-from logger_config import get_logger
+from .logger_config import get_logger
 
 # --------------- Package Manager ---------------
 

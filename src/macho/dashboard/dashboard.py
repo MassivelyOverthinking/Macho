@@ -1,6 +1,6 @@
 # --------------- Imports ---------------
 
-from src.macho.logging import get_logger
+from ..logging import get_logger
 
 import streamlit as st
 

@@ -1,7 +1,7 @@
 # --------------- Imports ---------------
 
-from dashboard import launch_dashboard
-from main import Cache
+from .dashboard import launch_dashboard
+from .main import Cache
 
 # --------------- Package Manager ---------------
 
