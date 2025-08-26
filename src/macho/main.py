@@ -220,7 +220,7 @@ class Cache():
             return self.cache.metric_lifespan
     
     @property
-    def metrics(self):
+    def metrics(self): 
         if isinstance(self.cache, list):
             return [shard.metrics for shard in self.cache]
         else:

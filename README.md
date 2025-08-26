@@ -193,7 +193,7 @@ Here is a current roadmap for future versions:
 
 ## 📚 Reading Material
 To learn more about the core mechanisms that power Macho, here are some essential resources:
-- [Bloom Filer](https://brilliant.org/wiki/bloom-filter/)
+- [Bloom Filter](https://brilliant.org/wiki/bloom-filter/)
 - [Sharding](https://en.wikipedia.org/wiki/Shard_(database_architecture))
 - [Eviction Policy](https://www.geeksforgeeks.org/system-design/cache-eviction-policies-system-design/)
 
