@@ -148,16 +148,6 @@ class Cache():
             logger.debug(f"Cache entry {key} successfully retreived")
             return self.cache.get(key)
         
-        
-    def get_metrics(self) -> Union[Dict[int, Dict[str, Any]], Dict[str, Any]]:
-        if isinstance(self.cache, list):
-            shard_dict = {}
-            for num, shard in enumerate(self.cache):
-                shard_dict[num] = shard.metrics()
-            return shard_dict
-        else:
-            return self.cache.metrics()
-        
     def clear(self) -> None:
         if isinstance(self.cache, list):
             for shard in self.cache:
