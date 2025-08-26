@@ -1,6 +1,7 @@
 # --------------- Imports ---------------
 
 from macho.dashboard import load_from_json
+from macho.utility import extract_general_info
 
 import streamlit as st
 
@@ -27,21 +28,9 @@ elif not isinstance(macho_cache_metrics, (dict, list)):
 else:
     if isinstance(macho_cache_metrics, list):
         st.subheader("Shared Cache Information")
-        st.json({
-            "Max Cache Size": sum([shard["max_cache_size"] for shard in macho_cache_metrics]),
-            "Current Cache Size": sum([shard["current_size"] for shard in macho_cache_metrics]),
-            "Shard Count": len(macho_cache_metrics)
-            
-        })
-
+        for index, shard in enumerate(macho_cache_metrics):
+            st.markdown(f"## Shard {index}")
+            st.json(extract_general_info(shard))
     else:
         st.subheader("Single Cache Information")
-        st.json({
-            "Max Cache Size": macho_cache_metrics["max_cache_size"],
-            "Current Cache Size": macho_cache_metrics["current_size"],
-            "Time-to-live": macho_cache_metrics["ttl"],
-            "Eviction Strategy": macho_cache_metrics["eviction_strategy"],
-            "Shard Count": macho_cache_metrics["shard_count"],
-            "Bloom Filter Enabled": macho_cache_metrics["bloom"],
-            "False Positive Rate": macho_cache_metrics["probability"] if macho_cache_metrics["bloom"] else "N/A"
-        })
+        st.json(extract_general_info(macho_cache_metrics))

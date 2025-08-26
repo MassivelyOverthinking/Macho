@@ -1,6 +1,6 @@
 # --------------- Imports ---------------
 
-from typing import List, Optional, Union, Any
+from typing import List, Optional, Union, Any, Dict
 
 from macho.models import BaseCache, LRUCache, FIFOCache, RandomCache
 from macho.errors import ShardException
@@ -61,6 +61,25 @@ def _create_sharded_cache(ttl: float, num: int, shards_capacity: List[int], poli
     logger.debug(f"{num} Cache Shards created with eviction policy {policy}")
 
     return shards_list
+
+def extract_general_info(metrics) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
+    if isinstance(metrics, list):
+        return [extract_general_info(m) for m in metrics]
+    
+    return {
+        "Max Cache Size": metrics.get("max_size", "N/A"),
+        "Current Cache Size": metrics.get("current_size", "N/A"),
+        "Time-to-live (secs)": metrics.get("ttl", "N/A"),
+        "Eviction strategy": metrics.get("eviction_strategy", "N/A"),
+        "Shard Count": metrics.get("shard_count", "N/A"),
+        "Bloom Filter Enable": metrics.get("bloom", "N/A"),
+        "False Positive Rate": (
+            metrics.get("probability", "N/A")
+            if metrics.get("bloom", False)
+            else "N/A"
+        )
+    }
+
 
 
 def create_cache(
